@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c5f81d99-dd93-422f-b746-6767c41d1609" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/JdbcTemplateConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/constant/Gender.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/controller/MemberController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/entity/History.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/entity/Member.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/repository/JdbcMemberRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/repository/MemberRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/service/MemberService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/DatabaseBikeApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/DatabaseBikeApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/JdbcTemplateConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/JdbcTemplateConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/JdbcTemplateConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +58,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/Database_Project",
     "project.structure.last.edited": "Project",
