@@ -19,4 +19,5 @@ public class CreateStationReq {
 
     private int holder_num;
 
+    private int loan_count;
 }

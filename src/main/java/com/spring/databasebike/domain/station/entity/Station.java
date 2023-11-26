@@ -29,6 +29,8 @@ public class Station {
 
     private boolean station_status;
 
+    private int loan_count;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -69,4 +71,7 @@ public class Station {
         this.station_status = station_status;
     }
 
+    public void setLoan_count(int loan_count) {
+        this.loan_count = loan_count;
+    }
 }

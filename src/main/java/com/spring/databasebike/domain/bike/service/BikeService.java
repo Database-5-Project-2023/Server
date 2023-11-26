@@ -2,7 +2,7 @@ package com.spring.databasebike.domain.bike.service;
 
 import com.spring.databasebike.domain.bike.entity.CreateBikeReq;
 import com.spring.databasebike.domain.bike.repository.BikeRepository;
-import com.spring.databasebike.domain.station.entity.CreateStationReq;
+import com.spring.databasebike.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 public class BikeService {
 
     private final BikeRepository bikeRepository;
+    private final MemberRepository memberRepository;
 
     @Autowired
-    public BikeService(BikeRepository bikeRepository) {
+    public BikeService(BikeRepository bikeRepository, MemberRepository memberRepository) {
         this.bikeRepository = bikeRepository;
+        this.memberRepository = memberRepository;
     }
 
     public void createBike(CreateBikeReq createBikeReq) {
@@ -26,5 +28,9 @@ public class BikeService {
                 .ifPresent(m->{
                     throw new IllegalStateException("이미 존재하는 자전거 아이디입니다!!!");
                 });
+    }
+
+    public void reportBike(String bikeId) {
+        bikeRepository.updateBikeStatus(bikeId);
     }
 }

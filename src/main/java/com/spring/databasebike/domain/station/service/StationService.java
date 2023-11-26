@@ -1,12 +1,14 @@
 package com.spring.databasebike.domain.station.service;
 
-import com.spring.databasebike.domain.station.entity.GetStationRes;
-import com.spring.databasebike.domain.station.entity.Station;
-import com.spring.databasebike.domain.station.entity.CreateStationReq;
+import com.spring.databasebike.domain.bike.entity.Bike;
+import com.spring.databasebike.domain.station.entity.*;
+import com.spring.databasebike.domain.member.entity.Member;
+import com.spring.databasebike.domain.member.repository.MemberRepository;
 import com.spring.databasebike.domain.station.repository.StationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,15 +16,18 @@ import java.util.Optional;
 public class StationService {
 
     private final StationRepository stationRepository;
+    private final MemberRepository memberRepository;
 
     @Autowired
-    public StationService(StationRepository stationRepository) {
+    public StationService(StationRepository stationRepository, MemberRepository memberRepository) {
         this.stationRepository = stationRepository;
+        this.memberRepository = memberRepository;
     }
 
     public void createStation(CreateStationReq createStationForm) {
 
         validateDuplicateStation(createStationForm);
+        createStationForm.setLoan_count(0);
         stationRepository.save(createStationForm);
         // return createStationForm.getStation_addr1();
     }
@@ -32,6 +37,59 @@ public class StationService {
                 .ifPresent(m->{
                     throw new IllegalStateException("이미 존재하는 대여소 아이디입니다!!!");
                 });
+    }
+
+    public void borrowGeneralBike(BorrowGeneralBikeReq bikeReq, String memberId) {
+        Optional<Member> borrower = memberRepository.findById(memberId);
+
+//  BorrowGeneralBikeReq bikeReq = new BorrowGeneralBikeReq();
+        //  borrower.ifPresent(member -> {
+        //    String borrowerId = member.getId();
+        String borrowerId = memberId;
+        bikeReq.setBike_id(bikeReq.getBike_id());
+        bikeReq.setStarting_station_id(bikeReq.getStarting_station_id());
+        bikeReq.setStart_time(LocalDateTime.now().toString());
+        stationRepository.borrowGeneralBike(bikeReq, memberId);
+        // });
+
+    }
+
+    public void returnGeneralBike(ReturnGeneralBikeReq bikeReq, String memberId) {
+        Optional<Member> borrower = memberRepository.findById(memberId);
+
+//  BorrowGeneralBikeReq bikeReq = new BorrowGeneralBikeReq();
+        //  borrower.ifPresent(member -> {
+        //    String borrowerId = member.getId();
+        String borrowerId = memberId;
+        bikeReq.setBike_id(bikeReq.getBike_id());
+        bikeReq.setArrival_station_id(bikeReq.getArrival_station_id());
+        bikeReq.setArrival_time(LocalDateTime.now().toString());
+        stationRepository.returnGeneralBike(bikeReq, memberId);
+        // });
+
+    }
+
+    public Float calculateDistance(String starting_station_id, String arrival_station_id) {
+        StationLocation startingStationLocation = stationRepository.findLocationByStationId(starting_station_id);
+        StationLocation arrivalStationLocation = stationRepository.findLocationByStationId(arrival_station_id);
+
+        Float startingLatitude = startingStationLocation.getStation_latitude();
+        Float startingLongitude = startingStationLocation.getStation_longitude();
+
+        Float arrivalLatitude = arrivalStationLocation.getStation_latitude();
+        Float arrivalLongitude = arrivalStationLocation.getStation_longitude();
+
+        Float distance = (float) Math.sqrt(Math.pow(arrivalLatitude-startingLatitude, 2) + Math.pow(arrivalLongitude-startingLongitude, 2));
+
+        return distance;
+    }
+
+    public List<Bike> getBikeListByStationId(String stationId) {
+        return stationRepository.getBikeListByStationId(stationId);
+    }
+
+    public List<Station> getStationByLoanCount() {
+        return stationRepository.getStationByLoanCount();
     }
 
     public List<Station> findAllStations() {

@@ -1,8 +1,7 @@
 package com.spring.databasebike.domain.station.controller;
 
-import com.spring.databasebike.domain.station.entity.CreateStationReq;
-import com.spring.databasebike.domain.station.entity.GetStationRes;
-import com.spring.databasebike.domain.station.entity.Station;
+import com.spring.databasebike.domain.bike.entity.Bike;
+import com.spring.databasebike.domain.station.entity.*;
 import com.spring.databasebike.domain.station.service.StationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,62 @@ public class StationController {
     }
 
     /**
+     * 대여소 별 따릉이 목록 조회
+     * @param stationId
+     * @return
+     */
+    @GetMapping("/station/bike/{stationId}")
+    public List<Bike> getBikeList(@PathVariable int stationId) {
+        return stationService.getBikeListByStationId(String.valueOf(stationId));
+    }
+
+    /**
+     * 일반 자전거 대여
+     * @param bikeReq
+     * @param memberId
+     * @return
+     */
+    // TODO: 대여한 사람, 반납한 사람 아이디 정보 출력
+    @PostMapping("/station/borrow/bike")
+    public String borrowGeneralBike(@RequestPart("bikeReq") BorrowGeneralBikeReq bikeReq,
+                                    @RequestPart("member") String memberId) {
+
+        stationService.borrowGeneralBike(bikeReq, memberId);
+
+        return bikeReq.getStarting_station_id();
+    }
+
+    /**
+     * 일반 자전거 반납
+     * @param bikeReq
+     * @param memberId
+     * @return
+     */
+    @PostMapping("/station/return/bike")
+    public String borrowGeneralBike(@RequestPart("bikeReq") ReturnGeneralBikeReq bikeReq,
+                                    @RequestPart("member") String memberId) {
+
+        stationService.returnGeneralBike(bikeReq, memberId);
+
+        return bikeReq.getArrival_station_id();
+    }
+
+    /**
+     * 두 대여소 간의 거리 계산
+     * @param starting_station_id
+     * @param arrival_station_id
+     * @return
+     */
+    @GetMapping("/station/calculate/distance")
+    public Float calculateDistance(@RequestPart("starting_station") int starting_station_id,
+                                   @RequestPart("arrival_station") int arrival_station_id) {
+
+        Float distance = stationService.calculateDistance(String.valueOf(starting_station_id), String.valueOf(arrival_station_id));
+
+        return distance;
+    }
+
+    /**
      * 관리자: 대여소 목록 조회
      * @return
      */
@@ -74,6 +129,24 @@ public class StationController {
         return stationService.findByStationId(String.valueOf(stationId));
     }
 
+    // TODO: 대여소 검색: 이름으로 -> 결과는 아이디랑 이름만 출력 (Like 사용할 것)
+
+    // TODO: 고장 신고
+
+    /**
+     * 관리자: 따릉이 대여 빈도 수 높은 곳
+     * @return
+     */
+    @GetMapping("/admin/dashboard/LowRentStation")
+    public List<Station> getStationByLoanCount() {
+        return stationService.getStationByLoanCount();
+    }
+
+    /**
+     * 관리자: 대여소 폐쇄
+     * @param stationId
+     * @return
+     */
     @DeleteMapping("/admin/station/delete/{stationId}")
     public String deleteStation(@PathVariable int stationId) {
 
