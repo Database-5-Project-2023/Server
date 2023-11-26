@@ -1,14 +1,17 @@
 package com.spring.databasebike.domain.member.service;
 
+import com.spring.databasebike.domain.member.entity.Bookmarks;
+import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
 import com.spring.databasebike.domain.member.repository.MemberRepository;
+import com.spring.databasebike.domain.post.entity.Post;
+import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 //@Service
-@Transactional
+@Service
 public class MemberService {
     private final MemberRepository memberRepository;
 
@@ -23,7 +26,7 @@ public class MemberService {
         return member;
     }
 
-    private  void validateDuplicateMember(Member member){
+    private  void validateDuplicateMember(Member member){ //회원가입할때 중복 회원 존재하는지 검사
         memberRepository.findById(member.getId()).ifPresent(m -> {
         throw new IllegalStateException("이미 존재하는 회원입니다.");});
     }
@@ -32,10 +35,12 @@ public class MemberService {
         return memberRepository.login(id, pwd);
     }
 
+    //id로 찾기
     public Optional<Member> findById(String id){
         return memberRepository.findById(id);
     }
 
+    //회원 정보 수정
     public void editPwd(String id, String pwd){
         memberRepository.editPwd(id, pwd);
     }
@@ -56,14 +61,38 @@ public class MemberService {
         memberRepository.editWeight(id, weight);
     }
 
+    //특정 회원의 대여/반납 이력 조회
+    public List<History> memHistoryList(String id, int start, int end){
+        return memberRepository.getHistoryList(id, start, end);
+    }
+
+    //특정 회원의 대여/반납 이력 개수
+    public Integer memHistoryNum(String id){
+        return memberRepository.getTotalHistory(id);
+    }
+
+    //특정 회원의 특정 기간동안의 대여/반납 이력 조회
+    public List<History> memSearchHistoryList(String id, String year, String month, int start, int end){
+        return memberRepository.getSearchHistoryList(id, year, month, start, end);
+    }
+
+    //회원 탈퇴
+    public void deleteMem(String id) { memberRepository.deleteMem(id); }
+
+    //즐겨찾기 추가
+    public void addBookmarks(String user_id, String station_id){ memberRepository.addBookmarks(user_id, station_id);}
+
+    //특정 이용자의 즐겨찾기 조회
+    public List<Bookmarks> findBookmarks(String id){return memberRepository.findBookmarks(id);}
+
+    //특정 이용자의 특정 즐겨찾기 삭제
+    public void deleteBookmarks(String user_id, String station_id){memberRepository.deleteBookmarks(user_id, station_id);}
+
+
     //회원 목록 조회
     public List<Member> findAll(){
         return memberRepository.findAll();
     }
 
-    /*public List<History> historyList(Pageable pageable){
-        return ...;
-    }
-    */
 
 }

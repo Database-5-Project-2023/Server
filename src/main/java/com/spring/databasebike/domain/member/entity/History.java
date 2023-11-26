@@ -1,48 +1,40 @@
 package com.spring.databasebike.domain.member.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.MappedCollection;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-@Entity
+
+@Data
 @Table(name = "usage_history")
 @Getter
 @Setter
 @ToString
 public class History {
     @Id
-    @Column(name="user_history_number")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String num;
+    private String usage_history_num;
 
-    // Many = History, One = Member 한명의 회원은 여러 이용 내역을 가질 수 있으니까
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private Member member;
+    private String user_id;
 
-    /*@ManyToOne
-    @JoinColumn(name="bike_id")
-    private Bike bike;
+    private String bike_id;
 
-    @ManyToOne
-    @JoinColumn(name="station_id") //시작, 끝 둘다 이거 하나로 가능?
-    private Station station;
+    private String starting_station_id;
 
-    @Column(name="starting_time")
-    private LocalDateTime start_time;*/
+    private String arrival_station_id;
 
-    @Column(name="arrival_time")
+    private LocalDateTime starting_time;
+
     private LocalDateTime arrival_time;
 
-    @Column(name="distance")
     private double distance;
 
-    @Column(name="return_status")
     private Boolean return_status;
-
-
-
 }

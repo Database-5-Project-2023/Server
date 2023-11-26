@@ -1,9 +1,13 @@
 package com.spring.databasebike.domain.station.entity;
 
+import com.spring.databasebike.domain.member.entity.Bookmarks;
+import com.spring.databasebike.domain.member.entity.History;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class Station {
@@ -28,6 +32,15 @@ public class Station {
     private LocalDateTime install_date;
 
     private boolean station_status;
+
+    @MappedCollection(idColumn = "starting_station_id", keyColumn = "usage_history_num")
+    private List<History> history1;
+
+    @MappedCollection(idColumn = "arrival_station_id", keyColumn = "usage_history_num")
+    private List<History> history2;
+
+    @MappedCollection(idColumn = "station_id", keyColumn = "user_id")
+    private List<Bookmarks> bookmarks;
 
     public void setId(Long id) {
         this.id = id;
