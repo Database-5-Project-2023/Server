@@ -1,15 +1,22 @@
 package com.spring.databasebike.domain.member.repository;
 
+import com.spring.databasebike.domain.member.entity.Bookmarks;
+import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
+import com.spring.databasebike.domain.post.entity.Post;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-//@Repository
+@Slf4j
+@Repository
 public class JdbcMemberRepository implements MemberRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -76,6 +83,59 @@ public class JdbcMemberRepository implements MemberRepository {
         jdbcTemplate.update(sql, weight, id);
     }
 
+    @Override
+    public void deleteMem(String id){
+        String sql = "DELETE FROM members WHERE user_id = ?"; //참조 문제,,, ON DELETE CASCADE 추가해주어야 함
+        //https://velog.io/@eensungkim/ON-DELETE-CASCADE-feat.-row-%ED%95%9C-%EB%B2%88%EC%97%90-%EC%A7%80%EC%9A%B0%EB%8A%94-%EB%B0%A9%EB%B2%95-TIL-78%EC%9D%BC%EC%B0%A8
+        jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public Integer getTotalHistory(String id){
+        String sql = "select count(*) from usage_history where user_id = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, id);
+    }
+
+    @Override
+    public List<History> getHistoryList(String id, int start, int end) {
+        String sql = "SELECT * FROM (\n" +
+                "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+                "    FROM (\n" +
+                "        SELECT * FROM usage_history WHERE user_id = ?\n" +
+                "    ) N\n" +
+                ") AS T\n" +
+                "WHERE NUM BETWEEN ? AND ?;";
+        return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
+    }
+    @Override
+    public List<History> getSearchHistoryList(String id, String year, String month, int start, int end) {
+        String sql = "SELECT * FROM (\n" +
+                "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+                "    FROM (\n" +
+                "        SELECT * FROM usage_history WHERE user_id = ? and DATE(starting_time) >= DATE(?) and DATE(arrival_time) <= DATE(?)\n" +
+                "    ) N\n" +
+                ") AS T\n" +
+                "WHERE NUM BETWEEN ? AND ?;";
+        return jdbcTemplate.query(sql, HistoryRowMapper(), id, year, month, start, end);
+    }
+
+    @Override
+    public void addBookmarks(String user_id, String station_id) {
+        String sql = "insert into bookmarks(user_id, station_id) values(?, ?)";
+        jdbcTemplate.update(sql, user_id, station_id);
+    }
+
+    @Override
+    public List<Bookmarks> findBookmarks(String id) {
+        String sql = "select * from bookmarks where user_id = ?";
+        return jdbcTemplate.query(sql, BookmarksRowMapper(), id);
+    }
+
+    @Override
+    public void deleteBookmarks(String user_id, String station_id) {
+        String sql = "DELETE FROM bookmarks WHERE user_id = ? and station_id = ?";
+        jdbcTemplate.update(sql, user_id, station_id);
+    }
 
     @Override
     public List<Member> findAll() { //전체 회원 조회
@@ -99,5 +159,28 @@ public class JdbcMemberRepository implements MemberRepository {
             member.setBike_borrow_status(rs.getBoolean("bike_borrow_status"));
             member.setUser_status(rs.getBoolean("user_status"));
             return member;
+        }; }
+
+    private RowMapper<History> HistoryRowMapper() {
+        return (rs, rowNum) -> {
+            History history = new History();
+            history.setUsage_history_num(rs.getString("usage_history_number"));
+            history.setUser_id(rs.getString("user_id"));
+            history.setBike_id(rs.getString("bike_id"));
+            history.setStarting_station_id(rs.getString("starting_station_id"));
+            history.setArrival_station_id(rs.getString("arrival_station_id"));
+            history.setStarting_time(rs.getObject("starting_time", LocalDateTime.class));
+            history.setArrival_time(rs.getObject("arrival_time", LocalDateTime.class));
+            history.setDistance(rs.getDouble("distance"));
+            history.setReturn_status(rs.getBoolean("return_status"));
+            return history;
+        }; }
+
+    private RowMapper<Bookmarks> BookmarksRowMapper() {
+        return (rs, rowNum) -> {
+            Bookmarks bookmarks = new Bookmarks();
+            bookmarks.setUser_id(rs.getString("user_id"));
+            bookmarks.setStation_id(rs.getString("station_id"));
+            return bookmarks;
         }; }
 }

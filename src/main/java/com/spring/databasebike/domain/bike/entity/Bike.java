@@ -1,6 +1,11 @@
 package com.spring.databasebike.domain.bike.entity;
 
+import com.spring.databasebike.domain.member.entity.Bookmarks;
+import com.spring.databasebike.domain.member.entity.History;
 import lombok.Data;
+import org.springframework.data.relational.core.mapping.MappedCollection;
+
+import java.util.List;
 
 @Data
 public class Bike {
@@ -10,6 +15,9 @@ public class Bike {
     private String station_id;
     private String bike_type;
     private boolean bike_status;
+
+    @MappedCollection(idColumn = "bike_id", keyColumn = "usage_history_num")
+    private List<History> history;
 
     public void setBike_id(String bike_id) {
         this.bike_id = bike_id;

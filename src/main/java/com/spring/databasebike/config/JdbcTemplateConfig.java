@@ -5,6 +5,8 @@ import com.spring.databasebike.domain.bike.repository.JdbcBikeRepository;
 import com.spring.databasebike.domain.member.repository.JdbcMemberRepository;
 import com.spring.databasebike.domain.member.repository.MemberRepository;
 import com.spring.databasebike.domain.member.service.MemberService;
+import com.spring.databasebike.domain.post.repository.JdbcPostRepository;
+import com.spring.databasebike.domain.post.repository.PostRepository;
 import com.spring.databasebike.domain.station.repository.JdbcStationRepository;
 import com.spring.databasebike.domain.station.repository.StationRepository;
 import org.springframework.context.annotation.Bean;
@@ -21,11 +23,6 @@ public class JdbcTemplateConfig {
     }
 
     @Bean
-    public MemberService memberService(){
-        return new MemberService(memberRepository());
-    }
-
-    @Bean
     public MemberRepository memberRepository(){
         return new JdbcMemberRepository(dataSource);
     }
@@ -39,4 +36,7 @@ public class JdbcTemplateConfig {
     public BikeRepository bikeRepository() {
         return new JdbcBikeRepository(dataSource);
     }
+
+    @Bean
+    public PostRepository postRepository(){return new JdbcPostRepository(dataSource);}
 }
