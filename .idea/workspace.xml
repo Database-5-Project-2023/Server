@@ -5,23 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c5f81d99-dd93-422f-b746-6767c41d1609" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/entity/Bookmarks.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/controller/PostController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/entity/Post.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/repository/JdbcPostRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/repository/PostRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/service/PostService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/img/마시마로.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/JdbcTemplateConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/JdbcTemplateConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/entity/Bike.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/entity/Bike.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/controller/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/controller/MemberController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/entity/History.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/entity/History.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/entity/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/entity/Member.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/repository/JdbcMemberRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/repository/JdbcMemberRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/repository/MemberRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/repository/MemberRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/service/MemberService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/member/service/MemberService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/AwsS3config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/AwsS3config.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/awsS3/service/AwsS3Service.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/awsS3/service/AwsS3Service.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/repository/JdbcPostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/post/repository/JdbcPostRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/entity/Station.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/entity/Station.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,12 +31,7 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="database-bike" type="f1a62948:ProjectNode" />
-              </path>
-            </expand>
+            <expand />
             <select />
           </tree_state>
         </projects_view>
@@ -77,19 +61,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Merging main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Database_Project",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Database_Project&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Application.DatabaseBikeApplication">
     <configuration name="DatabaseBikeApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.spring.databasebike.DatabaseBikeApplication" />

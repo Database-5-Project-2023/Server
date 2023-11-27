@@ -33,9 +33,8 @@ public class Station {
 
     private boolean station_status;
 
-<<<<<<< HEAD
     private int loan_count;
-=======
+
     @MappedCollection(idColumn = "starting_station_id", keyColumn = "usage_history_num")
     private List<History> history1;
 
@@ -44,7 +43,6 @@ public class Station {
 
     @MappedCollection(idColumn = "station_id", keyColumn = "user_id")
     private List<Bookmarks> bookmarks;
->>>>>>> 656c5eca9ba0470156d674220d7c6709ca645943
 
     public void setId(Long id) {
         this.id = id;

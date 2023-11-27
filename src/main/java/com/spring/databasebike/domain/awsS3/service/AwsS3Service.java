@@ -1,4 +1,4 @@
-package com.spring.databasebike.domain.awsS3;
+package com.spring.databasebike.domain.awsS3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -29,14 +30,24 @@ public class AwsS3Service {
      * @throws IOException
      */
     public String uploadImage(MultipartFile multipartFile) throws IOException {
-        String originalFilename = multipartFile.getOriginalFilename();
+        // String originalFilename = multipartFile.getOriginalFilename();
+
+        String uuid = "";
+        String file_name = "";
+        String file_path = "";
+
+        if(!multipartFile.isEmpty()){
+            uuid = UUID.randomUUID().toString();
+            file_name = uuid + multipartFile.getOriginalFilename();
+            file_path = "img/";
+        }
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
 
-        amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
-        return amazonS3.getUrl(bucket, originalFilename).toString();
+        amazonS3.putObject(bucket, file_name, multipartFile.getInputStream(), metadata);
+        return amazonS3.getUrl(bucket, file_name).toString();
     }
 
     /**

@@ -38,7 +38,7 @@ public class JdbcPostRepository implements PostRepository{
         Timestamp timestamp = new Timestamp(datetime);
 
         String sql = "insert into post(creator_id, title, content, hit, created_at, file_name, file_path) values(?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, p.getCreator_id(), p.getTitle(), p.getContent(), 0, timestamp, file_name, file_path);
+        jdbcTemplate.update(sql, p.getCreator_id(), p.getTitle(), p.getContent(), 0, timestamp, p.getFileName(), file_path);
 
     }
 

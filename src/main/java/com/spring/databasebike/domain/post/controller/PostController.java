@@ -1,4 +1,5 @@
 package com.spring.databasebike.domain.post.controller;
+import com.spring.databasebike.domain.awsS3.service.AwsS3Service;
 import com.spring.databasebike.domain.post.entity.Post;
 import com.spring.databasebike.domain.post.service.PostService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,9 @@ public class PostController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private AwsS3Service awsS3Service;
 
     //게시판 글 조회 화면
     @GetMapping("/posts") //페이징 처리
@@ -62,8 +66,9 @@ public class PostController {
     }
 
     @PostMapping("/posts/write") //작성한 게시글 저장
-    public String boardWritePro(@RequestBody Post p, Model model) throws Exception{
+    public String boardWritePro(@RequestPart("post") Post p, @RequestPart("image") MultipartFile multipartFile, Model model) throws Exception{
 
+        p.setFileName(awsS3Service.uploadImage(multipartFile));
         postService.writePost(p); //일단은 이미지빼고 저장되도록 구현
 
         model.addAttribute("message", "글 작성이 완료되었습니다.");
