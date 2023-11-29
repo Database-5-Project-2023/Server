@@ -73,7 +73,7 @@ public class StationController {
      * @return
      */
     @PostMapping("/station/return/bike")
-    public String borrowGeneralBike(@RequestPart("bikeReq") ReturnGeneralBikeReq bikeReq,
+    public String returnGeneralBike(@RequestPart("bikeReq") ReturnGeneralBikeReq bikeReq,
                                     @RequestPart("member") String memberId) {
 
         stationService.returnGeneralBike(bikeReq, memberId);
