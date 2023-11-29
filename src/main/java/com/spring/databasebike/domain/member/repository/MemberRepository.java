@@ -40,6 +40,6 @@ public interface MemberRepository {
 
     void deleteBookmarks(String user_id, String station_id); //해당 이용자의 즐겨찾기 삭제
 
-    List<Member> findAll(); //관리자 - 회원 관리
+    List<Member> findAll(int begin, int end); //관리자 - 회원 관리
 
 }

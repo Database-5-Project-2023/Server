@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +67,7 @@ public class MemberController {
     @PostMapping("members/login")
     public String login(String id, String pwd, HttpServletRequest request) {
         Optional<Member> mem = memberService.login(id, pwd);
-        if(mem!=null){
+        if(!mem.isEmpty()){
             HttpSession httpSession = request.getSession(true);
             httpSession.setAttribute("user_id", mem.get().getId());
             // 세션 유지기간 60분
@@ -89,7 +90,7 @@ public class MemberController {
     }
 
     //마이페이지 - 회원 정보 수정 페이지
-    @GetMapping("members/page/edit") //주소 수정
+    @GetMapping("members/edit") //주소 수정
     public String editForm(String id, Model model){
         Optional<Member> mem = memberService.findById(id); //일치하는 id를 가진 회원 정보를 가져와
 
@@ -99,7 +100,7 @@ public class MemberController {
     }
 
     //마이페이지 - 회원 정보 수정 페이지 - 아이디를 제외한 정보 수정
-    @PostMapping("members/page/edit") //주소 수정
+    @PostMapping("members/edit") //주소 수정
     public String editMem(String id, String newPwd, String newEmail, String newPhone,
                           String newAddr, String newWeight){
         if(newPwd!=null) {
@@ -219,11 +220,68 @@ public class MemberController {
 
     // <관리자>
 
-    //1. 회원 조회 및 검색- findAll
+    //1. 회원 관리 페이지 - 회원 조회 및 검색- findAll or 검색함수(검색은 id로)
+    @GetMapping("/admin/user_manage")
+    public String AdminUserList(String page, Model model, @RequestPart(value = "search", required = false) String searchKeyword){
+        int begin, end, nowPage, pageSize = 10; //수정 - 10으로
 
+        if ( page == null || page.equals("")) {
+            nowPage = 1;
+        } else {
+            nowPage = Integer.parseInt(page);
+        }
 
+        // 현재 페이지에서 가져올 시작 위치 구하기
+        begin = ( (nowPage - 1) * pageSize ) + 1;
+        // 게시물 끝 위치 찾기
+        end = begin + pageSize - 1;
 
+        int startPage, endPage;
 
+        if(searchKeyword == null) //검색하지 않고 조회
+        {
+            List <Member> list = null;
+            list = memberService.findAll(begin, end);
+            int totalMember = list.size(); //전체 게시글 수
+            startPage = Math.max(nowPage - 4, 1);
+            endPage = Math.min(nowPage + 5, totalMember / pageSize + 1);
+            model.addAttribute("list", list);
+            /*for(Member mem: list){
+            System.out.println(mem.getId() + " " + mem.getName() + " " + mem.getEmail());
+            }*/
+        }
+        else {
+            List <Member> list = new ArrayList<Member>();
+            Optional <Member> member;
+            member = memberService.findById(searchKeyword); //검색하여 조회
+            if(!member.isEmpty()) {
+                Member mem = new Member();
+                mem.setId(member.get().getId());
+                mem.setPwd(member.get().getPwd());
+                mem.setName(member.get().getName());
+                mem.setEmail(member.get().getEmail());
+                mem.setAddress(member.get().getAddress());
+                mem.setPhone_num(member.get().getPhone_num());
+                mem.setAge(member.get().getAge());
+                mem.setGender(member.get().getGender());
+                mem.setWeight(member.get().getWeight());
+                mem.setBike_borrow_status(member.get().getBike_borrow_status());
+                mem.setUser_status(member.get().getUser_status());
+                list.add(mem);
+                model.addAttribute("list", list);
+            }
+            else model.addAttribute("message", "존재하지 않는 이용자입니다.");
+            startPage = 1;
+            endPage = 1;
+        }
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        return "members/manageList";
+    }
+
+    //2. 월 별 회원 가입수 그래프
 
 
 }

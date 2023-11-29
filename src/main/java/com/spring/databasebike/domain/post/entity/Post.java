@@ -24,9 +24,9 @@ public class Post {
 
     private String content;
 
-    private String fileName; //이런 식으로 column 수정해야 할 듯...
+    private String fileName;
 
-    private String filePath;
+    private String filePath; //안쓰는데...지워도 되려나?
 
     private Integer hit;
 

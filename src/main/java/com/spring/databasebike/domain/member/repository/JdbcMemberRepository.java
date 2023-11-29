@@ -138,9 +138,15 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public List<Member> findAll() { //전체 회원 조회
-
-        return jdbcTemplate.query("select * from members", MemberRowMapper());
+    public List<Member> findAll(int begin, int end) { //전체 회원 조회
+        String sql = "SELECT * FROM (\n" +
+                "    SELECT ROW_NUMBER() OVER (ORDER BY user_name) AS NUM, N.*\n" +
+                "    FROM (\n" +
+                "        SELECT * FROM members\n" +
+                "    ) N\n" +
+                ") AS T\n" +
+                "WHERE NUM BETWEEN ? AND ?;";
+        return jdbcTemplate.query(sql, MemberRowMapper(), begin, end);
     }
 
     private RowMapper<Member> MemberRowMapper() {

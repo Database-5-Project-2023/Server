@@ -90,8 +90,8 @@ public class MemberService {
 
 
     //회원 목록 조회
-    public List<Member> findAll(){
-        return memberRepository.findAll();
+    public List<Member> findAll(int begin, int end){
+        return memberRepository.findAll(begin, end);
     }
 
 
