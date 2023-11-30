@@ -25,6 +25,7 @@ public interface StationRepository {
     List<Station> findAll();
 
     StationLocation findLocationByStationId(String stationId);
+    List<StationLocation> getStationListByLocation();
 
     void delete(String stationId);
 }

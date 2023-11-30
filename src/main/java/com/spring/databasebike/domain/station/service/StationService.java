@@ -152,6 +152,10 @@ public class StationService {
         return stationResList;
     }
 
+    public List<StationLocation> getStationListByLocation(){
+        return stationRepository.getStationListByLocation();
+    }
+
     public void deleteStation(String stationId) {
         stationRepository.delete(stationId);
     }

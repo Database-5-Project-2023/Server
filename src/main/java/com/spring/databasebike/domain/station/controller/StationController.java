@@ -81,6 +81,11 @@ public class StationController {
         return bikeReq.getArrival_station_id();
     }
 
+    @GetMapping("/station/location")
+    public List<StationLocation> getStationListByLocation(){
+        return stationService.getStationListByLocation();
+    }
+
     /**
      * 두 대여소 간의 거리 계산
      * @param starting_station_id

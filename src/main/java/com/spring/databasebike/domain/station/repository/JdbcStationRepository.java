@@ -133,6 +133,12 @@ public class JdbcStationRepository implements StationRepository {
     }
 
     @Override
+    public List<StationLocation> getStationListByLocation() {
+        return jdbcTemplate.query("SELECT s.station_id, s.station_addr1, s.station_addr2, sl.station_latitude, sl.station_longitude " +
+                "FROM station as s INNER JOIN station_location as sl ON s.station_id = sl.station_id", stationLocationRowMapper());
+    }
+
+    @Override
     public void delete(String stationId) {
         String sql = "DELETE FROM station WHERE station_id = " + stationId;
 
