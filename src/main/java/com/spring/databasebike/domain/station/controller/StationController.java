@@ -140,7 +140,7 @@ public class StationController {
      * @return
      */
     // TODO: 대여소 검색: 이름으로 -> 결과는 아이디랑 이름만 출력
-    @PostMapping("/station/search")
+    @GetMapping("/station/search")
     public List<SearchStationRes> searchStationByAddress(@RequestPart("req") SearchStationReq searchStationReq){
         return stationService.searchStationByAddress(searchStationReq.getStation_address());
     }

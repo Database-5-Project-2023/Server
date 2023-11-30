@@ -8,8 +8,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/controller/StationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/controller/StationController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/repository/JdbcStationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/repository/JdbcStationRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/repository/StationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/repository/StationRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/service/StationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/station/service/StationService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

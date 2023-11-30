@@ -120,9 +120,9 @@ public class JdbcStationRepository implements StationRepository {
 
     @Override
     public List<Station> findByAddress(String address) {
-        String sql = "SELECT station_id, station_addr1, station_addr2 FROM station WHERE station_addr1 LIKE ? OR station_addr2 LIKE ?";
+        String sql = "SELECT station_id, station_addr1, station_addr2 FROM station WHERE station_addr2 LIKE ?";
 
-        List<Station> result = jdbcTemplate.query(sql, searchStationRowMapper(), "%" + address + "%", "%" + address + "%");
+        List<Station> result = jdbcTemplate.query(sql, searchStationRowMapper(), "%" + address + "%");
 
         return result;
     }
