@@ -12,4 +12,6 @@ public class ReturnGeneralBikeReq {
     private String arrival_station_id;
     // private String member_id;
     private String arrival_time;
+
+    private Float distance;
 }

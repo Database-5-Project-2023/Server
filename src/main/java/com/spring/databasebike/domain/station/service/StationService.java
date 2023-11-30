@@ -1,6 +1,8 @@
 package com.spring.databasebike.domain.station.service;
 
 import com.spring.databasebike.domain.bike.entity.Bike;
+import com.spring.databasebike.domain.history.repository.HistoryRepository;
+import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.station.entity.*;
 import com.spring.databasebike.domain.member.entity.Member;
 import com.spring.databasebike.domain.member.repository.MemberRepository;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,10 +21,13 @@ public class StationService {
     private final StationRepository stationRepository;
     private final MemberRepository memberRepository;
 
+    private final HistoryRepository historyRepository;
+
     @Autowired
-    public StationService(StationRepository stationRepository, MemberRepository memberRepository) {
+    public StationService(StationRepository stationRepository, MemberRepository memberRepository, HistoryRepository historyRepository) {
         this.stationRepository = stationRepository;
         this.memberRepository = memberRepository;
+        this.historyRepository = historyRepository;
     }
 
     public void createStation(CreateStationReq createStationForm) {
@@ -52,6 +58,14 @@ public class StationService {
         stationRepository.borrowGeneralBike(bikeReq, memberId);
         // });
 
+//        CreateHistoryReq createHistoryReq = new CreateHistoryReq();
+//        createHistoryReq.setUser_id(memberId);
+//        createHistoryReq.setBike_id(bikeReq.getBike_id());
+//        createHistoryReq.setArrival_station_id(bikeReq.getStarting_station_id());
+//        createHistoryReq.setStarting_time(LocalDateTime.now());
+//        createHistoryReq.setReturn_status(false);
+
+        // historyRepository.createHistory(bikeReq, memberId);
     }
 
     public void returnGeneralBike(ReturnGeneralBikeReq bikeReq, String memberId) {
@@ -64,9 +78,15 @@ public class StationService {
         bikeReq.setBike_id(bikeReq.getBike_id());
         bikeReq.setArrival_station_id(bikeReq.getArrival_station_id());
         bikeReq.setArrival_time(LocalDateTime.now().toString());
+
+        // History history = historyRepository.findHistoryByBikeId(bikeReq.getBike_id());
+        // Float distance = calculateDistance(history.getStarting_station_id(), bikeReq.getArrival_station_id());
+        // bikeReq.setDistance(distance);
+
         stationRepository.returnGeneralBike(bikeReq, memberId);
         // });
 
+        // historyRepository.updateHistory(bikeReq, memberId);
     }
 
     public Float calculateDistance(String starting_station_id, String arrival_station_id) {
@@ -115,6 +135,25 @@ public class StationService {
 
         // return stationRepository.findByStationId(id);
         return getStationRes;
+    }
+
+    public List<SearchStationRes> searchStationByAddress(String address) {
+        List<Station> result = stationRepository.findByAddress(address);
+
+        List<SearchStationRes> stationResList = new ArrayList<>();
+
+        for(Station station: result){
+            SearchStationRes stationRes = new SearchStationRes();
+            stationRes.setId(station.getStation_id());
+            stationRes.setStation_addr2(station.getStation_addr2());
+            stationResList.add(stationRes);
+        }
+
+        return stationResList;
+    }
+
+    public List<StationLocation> getStationListByLocation(){
+        return stationRepository.getStationListByLocation();
     }
 
     public void deleteStation(String stationId) {
