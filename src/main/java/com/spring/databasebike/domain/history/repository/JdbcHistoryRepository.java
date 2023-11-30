@@ -1,6 +1,8 @@
 package com.spring.databasebike.domain.history.repository;
 
+import com.spring.databasebike.domain.history.entity.CreateHistoryReq;
 import com.spring.databasebike.domain.member.entity.History;
+import com.spring.databasebike.domain.member.entity.Member;
 import com.spring.databasebike.domain.station.entity.BorrowGeneralBikeReq;
 import com.spring.databasebike.domain.station.entity.ReturnGeneralBikeReq;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +25,15 @@ public class JdbcHistoryRepository implements HistoryRepository {
     }
     
     @Override
-    public void createHistory(BorrowGeneralBikeReq borrowGeneralBikeReq, String memberId) {
+    public void createHistory(CreateHistoryReq createHistoryReq) {
         String sql = "INSERT INTO usage_history (user_id, bike_id, starting_station_id, arrival_station_id, starting_time, arrival_time, distance, return_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         Object[] createHistoryParams = new Object[] {
-                memberId,
-                borrowGeneralBikeReq.getBike_id(),
-                borrowGeneralBikeReq.getStarting_station_id(),
-                "",
-                borrowGeneralBikeReq.getStart_time(),
+                createHistoryReq.getUser_id(),
+                createHistoryReq.getBike_id(),
+                createHistoryReq.getStarting_station_id(),
+                createHistoryReq.getStarting_station_id(),
+                createHistoryReq.getStarting_time(),
                 LocalDateTime.now(),
                 0.0, false
         };
@@ -48,7 +50,7 @@ public class JdbcHistoryRepository implements HistoryRepository {
             Float distance = returnGeneralBikeReq.getDistance();
 
             String sql = "UPDATE usage_history SET arrival_station_id = ?, arrival_time = ?, distance = ?, return_status = ? WHERE usage_history_number = ?";
-            this.jdbcTemplate.update(sql, returnGeneralBikeReq.getArrival_station_id(), returnGeneralBikeReq.getArrival_time(), distance, true, usage_history_num);
+            this.jdbcTemplate.update(sql, returnGeneralBikeReq.getArrival_station_id(), LocalDateTime.now(), distance, true, usage_history_num);
         } catch (Exception e) {
             log.error("[Update History]: 오류 발생", e);
         }

@@ -1,12 +1,13 @@
 package com.spring.databasebike.domain.bike.controller;
 
 import com.spring.databasebike.config.BaseResponse;
-import com.spring.databasebike.domain.bike.entity.CreateBikeReq;
-import com.spring.databasebike.domain.bike.entity.ReportBikeReq;
+import com.spring.databasebike.domain.bike.entity.*;
 import com.spring.databasebike.domain.bike.service.BikeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -32,6 +33,11 @@ public class BikeController {
         return createBikeReq.getBike_type();
     }
 
+    /**
+     * 따릉이 고장 신고
+     * @param reportBikeReq
+     * @return
+     */
     @PostMapping("/bike/report")
     public BaseResponse<String> reportBike(@RequestBody ReportBikeReq reportBikeReq) {
 
@@ -40,4 +46,13 @@ public class BikeController {
         return new BaseResponse<>(reportBikeReq.getBike_id());
     }
 
+    /**
+     * 관리자: 따릉이 관리 페이지 - 따릉이 검색
+     * @param searchBikeReq
+     * @return
+     */
+    @GetMapping("/admin/bike_manage")
+    public List<SearchBikeRes> searchBikeById(@RequestPart("req") SearchBikeReq searchBikeReq) {
+        return bikeService.getListByBikeId(searchBikeReq.getBike_id());
+    }
 }
