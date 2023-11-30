@@ -119,6 +119,15 @@ public class JdbcStationRepository implements StationRepository {
     }
 
     @Override
+    public List<Station> findByAddress(String address) {
+        String sql = "SELECT station_id, station_addr1, station_addr2 FROM station WHERE station_addr1 LIKE ? OR station_addr2 LIKE ?";
+
+        List<Station> result = jdbcTemplate.query(sql, searchStationRowMapper(), "%" + address + "%", "%" + address + "%");
+
+        return result;
+    }
+
+    @Override
     public List<Station> findAll() {
         return jdbcTemplate.query("select * from station limit 10", stationRowMapper());
     }
@@ -160,6 +169,18 @@ public class JdbcStationRepository implements StationRepository {
             stationLocation.setStation_longitude(rs.getFloat("station_longitude"));
 
             return stationLocation;
+        };
+    }
+
+    private RowMapper<Station> searchStationRowMapper() {
+        return (rs, rowNum) -> {
+            Station station = new Station();
+
+            station.setStation_id(rs.getString("station_id"));
+            station.setStation_addr1(rs.getString("station_addr1"));
+            station.setStation_addr2(rs.getString("station_addr2"));
+
+            return station;
         };
     }
 

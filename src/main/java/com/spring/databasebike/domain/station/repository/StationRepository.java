@@ -21,6 +21,7 @@ public interface StationRepository {
     Optional<Station> findById(String stationId);
     Station findByStationId(String stationId);
     Optional<Station> findByBorough(String borough);
+    List<Station> findByAddress(String address);
     List<Station> findAll();
 
     StationLocation findLocationByStationId(String stationId);

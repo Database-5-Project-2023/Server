@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -134,6 +135,21 @@ public class StationService {
 
         // return stationRepository.findByStationId(id);
         return getStationRes;
+    }
+
+    public List<SearchStationRes> searchStationByAddress(String address) {
+        List<Station> result = stationRepository.findByAddress(address);
+
+        List<SearchStationRes> stationResList = new ArrayList<>();
+
+        for(Station station: result){
+            SearchStationRes stationRes = new SearchStationRes();
+            stationRes.setId(station.getStation_id());
+            stationRes.setStation_addr2(station.getStation_addr2());
+            stationResList.add(stationRes);
+        }
+
+        return stationResList;
     }
 
     public void deleteStation(String stationId) {
