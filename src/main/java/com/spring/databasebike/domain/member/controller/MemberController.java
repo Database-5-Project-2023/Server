@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,9 +113,13 @@ public class MemberController {
         return mem; //수정한 이용자 반환
     }
 
-    //마이 페이지 - 대여 및 반납 이력 조회 - 수정 필요함...
+    //마이 페이지 - 대여 및 반납 이력 조회(기간별 조회 가능)
     @GetMapping("/history")
-    public List<History> getMemHistory(String id, String page, @RequestParam(value = "year", required = false) String year, @RequestParam(value = "month", required = false) String month, Model model){
+    public List<History> getMemHistory(String id, String page, @RequestParam(value = "period", required = false) String period, @RequestParam(value="start_date", required = false) String start_date, @RequestParam(value="end_date", required = false) String end_date, Model model){
+
+        //1. 기간 검색 없이 전체 조회
+        //2. 1주일, 1개월, 3개월, 6개월 중 하나를 선택하여 조회하고자 하는 경우(period에 1 week, 1 month, 3 month, 6 month로 넣어서 전달)
+        //3. start_date와 end_date에 특정 연도와 날짜를 지정하여 검색하는 경우
 
         int begin, end, nowPage, pageSize = 10;
 
@@ -135,15 +141,11 @@ public class MemberController {
         int startPage = Math.max(nowPage - 4, 1);
         int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
 
-        if(year == null && month == null) { //검색하지 않는 경우
+        if(period == null && start_date == null && end_date == null) { //기간 검색하지 않는 경우
             list = memberService.memHistoryList(id, begin, end);
         }else { //검색 하는 경우
-            list = memberService.memSearchHistoryList(id, year, month, begin, end);
+            list = memberService.memSearchHistoryList(id, period, start_date, end_date, begin, end);
         }
-
-        /*for(History data: list){
-            System.out.println(data.getUsage_history_num() + " " + data.getBike_id() + " " + data.getStarting_station_id() + " " + data.getArrival_station_id() + " " + data.getStarting_time() + " " + data.getArrival_time());
-        }*/
 
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
@@ -157,6 +159,24 @@ public class MemberController {
     //마이 페이지 - 댓글 조회
 
     //마이 페이지 - 랭킹 조회
+    //1. 월간 이용 거리
+    /*@GetMapping("/history/ranking")
+    public HashMap<String, Float> rankingMonth(@RequestParam(value = "month", required = false) String month, @RequestParam(value = "week", required = false) String week){
+        HashMap<String, Float> ranking = new HashMap<>();
+
+
+
+        return ranking;
+    }*/
+    //2. 주간 이용 거리
+
+    //3. 성별 이용 거리
+
+    //4. 거주지 이용 거리
+
+    //5. 나이대 이용 거리
+
+
 
     //마이 페이지 - 탈퇴
     @GetMapping("members/delete")
@@ -243,10 +263,11 @@ public class MemberController {
         model.addAttribute("endPage", endPage);*/
     }
 
-    //2. 월 별 회원 가입수 그래프 - column 추가..
-
-
-
-
+    //2. 월 별 회원 가입수 그래프 - created_at column 추가함
+    @GetMapping("/admin/dashboard/memGraph")
+    public HashMap<Integer, Integer> AdminMemGraph(){
+        HashMap<Integer, Integer> list = memberService.getMemGraph();
+        return list; //<월, 가입자수> 형태
+    }
 
 }

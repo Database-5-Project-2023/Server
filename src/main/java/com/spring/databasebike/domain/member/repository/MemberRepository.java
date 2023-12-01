@@ -6,6 +6,7 @@ import com.spring.databasebike.domain.member.entity.Member;
 import com.spring.databasebike.domain.post.entity.Post;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public interface MemberRepository {
 
     List<History> getHistoryList(String id, int start, int end); //해당 유저의 대여/반납 이력 조회
 
-    List<History> getSearchHistoryList(String id, String year, String month, int start, int end); //해당 이용자의 특정 기간동안의 대여/반납 이력 조회
+    List<History> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end); //해당 이용자의 특정 기간동안의 대여/반납 이력 조회
 
     void deleteMem(String id); //회원 탈퇴
 
@@ -41,5 +42,7 @@ public interface MemberRepository {
     void deleteBookmarks(String user_id, String station_id); //해당 이용자의 즐겨찾기 삭제
 
     List<Member> findAll(int begin, int end); //관리자 - 회원 관리
+
+    HashMap<Integer, Integer> getMemGraph();
 
 }
