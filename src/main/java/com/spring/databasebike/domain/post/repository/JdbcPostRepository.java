@@ -24,15 +24,8 @@ public class JdbcPostRepository implements PostRepository{
 
     @Override
     public void save(Post p) {
-        String uuid = "";
-        String file_name = "";
-        String file_path = "";
 
-        /*if(!file.isEmpty()){
-            uuid = UUID.randomUUID().toString();
-            file_name = uuid + file.getOriginalFilename();
-            file_path = "img/";
-        }*/
+        String file_path = ""; //필요한가?
 
         Long datetime = System.currentTimeMillis();
         Timestamp timestamp = new Timestamp(datetime);
@@ -55,6 +48,18 @@ public class JdbcPostRepository implements PostRepository{
     }
 
     @Override
+    public List<Post> getPostListByKeyword(int begin, int end, String searchKeyword) {
+        String sql = "SELECT * FROM (\n" +
+                "    SELECT ROW_NUMBER() OVER (ORDER BY created_at DESC) AS NUM, N.*\n" +
+                "    FROM (\n" +
+                "        SELECT * FROM post where title like ? \n" +
+                "    ) N\n" +
+                ") AS T\n" +
+                "WHERE NUM BETWEEN ? AND ?;";
+        return jdbcTemplate.query(sql, PostRowMapper(), "%" + searchKeyword + "%", begin, end);
+    }
+
+    @Override
     public Integer getTotalPost(String id){ //해당 유저가 작성한 게시글 수 반환
         String sql = "select count(*) from post where creator_id = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, id);
@@ -71,6 +76,57 @@ public class JdbcPostRepository implements PostRepository{
                 "WHERE NUM BETWEEN ? AND ?;";
         return jdbcTemplate.query(sql, PostRowMapper(), id, start, end);
 
+    }
+
+    @Override
+    public Post findByPostNum(int num) {
+        String sql = "select * from post limit ?, 1";
+        return jdbcTemplate.queryForObject(sql, PostRowMapper(), num);
+    }
+
+    @Override
+    public Optional<Post> findByPostUserId(String user_id, int num) {
+        String sql = "select * from(select * from post limit ?, 1)R where creator_id = ?";
+        try {
+            Post post = jdbcTemplate.queryForObject(sql, PostRowMapper(), num, user_id);
+            return Optional.of(post);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+
+    }
+
+    @Override
+    public void updatePost(Post p) {
+        String sql = "UPDATE post SET title = ? WHERE post_id = ?";
+        jdbcTemplate.update(sql, p.getTitle(), p.getPost_id());
+
+        sql = "UPDATE post SET content = ? WHERE post_id = ?";
+        jdbcTemplate.update(sql, p.getContent(), p.getPost_id());
+
+        sql = "UPDATE post SET title = ? WHERE post_id = ?";
+        jdbcTemplate.update(sql, p.getTitle(), p.getPost_id());
+
+        sql = "UPDATE post SET file_name = ? WHERE post_id = ?";
+        jdbcTemplate.update(sql, p.getFileName(), p.getPost_id());
+    }
+
+    @Override
+    public void deletePost(int post_id) {
+        String sql = "DELETE FROM post WHERE post_id = ?";
+        jdbcTemplate.update(sql, post_id);
+    }
+
+    @Override
+    public List<Post> recentPost() {
+        String sql = "SELECT * FROM (\n" +
+                "    SELECT ROW_NUMBER() OVER (ORDER BY created_at DESC) AS NUM, N.*\n" +
+                "    FROM (\n" +
+                "        SELECT * FROM post\n" +
+                "    ) N\n" +
+                ") AS T\n" +
+                "WHERE NUM BETWEEN 1 AND 5;";
+        return jdbcTemplate.query(sql, PostRowMapper());
     }
 
     private RowMapper<Post> PostRowMapper() {

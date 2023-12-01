@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,13 +34,13 @@ public class MemberController {
     }
 
     //회원가입
-    @GetMapping("/members/join")
+    /*@GetMapping("/members/join")
     public String joinForm(){
-        return "members/createMemberForm"; //수정 필요
-    }
+        return "members/createMemberForm";
+    }*/
 
     @PostMapping("/members/join")
-    public String create(@RequestBody Member member){
+    public Member create(@RequestBody Member member){
         Member newMem = new Member();
         newMem.setId(member.getId());
         newMem.setPwd(member.getPwd());
@@ -54,53 +57,42 @@ public class MemberController {
 
         Member mem = memberService.join(newMem);
 
-        return "redirect:/";
-    }
-
-    //로그인
-    @GetMapping("members/login")
-    public String loginForm() {
-        return "login/loginForm";
+        return mem;
     }
 
     @PostMapping("members/login")
-    public String login(String id, String pwd, HttpServletRequest request) {
+    public Optional<Member> login(String id, String pwd, HttpServletRequest request) {
         Optional<Member> mem = memberService.login(id, pwd);
-        if(mem!=null){
+        if(!mem.isEmpty()){
             HttpSession httpSession = request.getSession(true);
             httpSession.setAttribute("user_id", mem.get().getId());
-            // 세션 유지기간 60분
-            httpSession.setMaxInactiveInterval(60*60);
-            return "redirect:/";
+            httpSession.setMaxInactiveInterval(60*60); // 세션 유지기간 60분
         }
-        else {
-            return "login/loginForm"; //로그인 화면
-        }
+        return mem; //만약 로그인이 안되면, null 반환됨.
     }
 
     //로그아웃
     @GetMapping("members/logout")
-    public String logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
-        return "redirect:/";
     }
 
     //마이페이지 - 회원 정보 수정 페이지
-    @GetMapping("members/page/edit") //주소 수정
-    public String editForm(String id, Model model){
+    /*@GetMapping("members/edit") //주소 수정
+    public Optional<Member> editForm(String id, Model model){
         Optional<Member> mem = memberService.findById(id); //일치하는 id를 가진 회원 정보를 가져와
+        return mem;
+        //model.addAttribute("member", mem);
 
-        model.addAttribute("member", mem);
-
-        return "members/edit"; //페이지는 그대로. 회원 정보 수정 페이지로
-    }
+        //return "members/edit"; //페이지는 그대로. 회원 정보 수정 페이지로
+    }*/
 
     //마이페이지 - 회원 정보 수정 페이지 - 아이디를 제외한 정보 수정
-    @PostMapping("members/page/edit") //주소 수정
-    public String editMem(String id, String newPwd, String newEmail, String newPhone,
+    @PostMapping("members/edit") //주소 수정
+    public Optional<Member> editMem(String id, String newPwd, String newEmail, String newPhone,
                           String newAddr, String newWeight){
         if(newPwd!=null) {
             memberService.editPwd(id, newPwd);
@@ -117,12 +109,17 @@ public class MemberController {
         if(newWeight!=null) {
             memberService.editWeight(id, newWeight);
         }
-        return "members/edit"; //페이지는 그대로
+        Optional<Member> mem = memberService.findById(id);
+        return mem; //수정한 이용자 반환
     }
 
-    //마이 페이지 - 대여 및 반납 이력 조회 - 수정 필요함...
+    //마이 페이지 - 대여 및 반납 이력 조회(기간별 조회 가능)
     @GetMapping("/history")
-    public String getMemHistory(String id, String page, @RequestParam(value = "year", required = false) String year, @RequestParam(value = "month", required = false) String month, Model model){
+    public List<History> getMemHistory(String id, String page, @RequestParam(value = "period", required = false) String period, @RequestParam(value="start_date", required = false) String start_date, @RequestParam(value="end_date", required = false) String end_date, Model model){
+
+        //1. 기간 검색 없이 전체 조회
+        //2. 1주일, 1개월, 3개월, 6개월 중 하나를 선택하여 조회하고자 하는 경우(period에 1 week, 1 month, 3 month, 6 month로 넣어서 전달)
+        //3. start_date와 end_date에 특정 연도와 날짜를 지정하여 검색하는 경우
 
         int begin, end, nowPage, pageSize = 10;
 
@@ -144,22 +141,17 @@ public class MemberController {
         int startPage = Math.max(nowPage - 4, 1);
         int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
 
-        if(year == null && month == null) { //검색하지 않는 경우
+        if(period == null && start_date == null && end_date == null) { //기간 검색하지 않는 경우
             list = memberService.memHistoryList(id, begin, end);
         }else { //검색 하는 경우
-            list = memberService.memSearchHistoryList(id, year, month, begin, end);
+            list = memberService.memSearchHistoryList(id, period, start_date, end_date, begin, end);
         }
 
-        /*for(History data: list){
-            System.out.println(data.getUsage_history_num() + " " + data.getBike_id() + " " + data.getStarting_station_id() + " " + data.getArrival_station_id() + " " + data.getStarting_time() + " " + data.getArrival_time());
-        }*/
-
-        model.addAttribute("list", list);
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
 
-        return "members/record"; //대여 및 반납 이력 페이지
+        return list;
     }
 
     //마이 페이지 - 작성글 조회 - PostController에 구현
@@ -167,63 +159,115 @@ public class MemberController {
     //마이 페이지 - 댓글 조회
 
     //마이 페이지 - 랭킹 조회
+    //1. 월간 이용 거리
+    /*@GetMapping("/history/ranking")
+    public HashMap<String, Float> rankingMonth(@RequestParam(value = "month", required = false) String month, @RequestParam(value = "week", required = false) String week){
+        HashMap<String, Float> ranking = new HashMap<>();
+
+
+
+        return ranking;
+    }*/
+    //2. 주간 이용 거리
+
+    //3. 성별 이용 거리
+
+    //4. 거주지 이용 거리
+
+    //5. 나이대 이용 거리
+
+
 
     //마이 페이지 - 탈퇴
     @GetMapping("members/delete")
-    public String deleteForm(String id, Model model){
+    public Optional<Member> deleteForm(String id, Model model){
         Optional<Member> mem = memberService.findById(id); //일치하는 id를 가진 회원 정보를 가져와
-
-        model.addAttribute("member", mem);
-
-        return "members/delete"; //페이지는 그대로. 회원 탈퇴 페이지로
+        return mem;
     }
 
     //마이페이지 - 회원 탈퇴 페이지
     @PostMapping("members/delete")
-    public String deleteMem(String id, HttpServletRequest request){
+    public void deleteMem(String id, HttpServletRequest request){
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
         memberService.deleteMem(id);
-        return "redirect:/"; //메인 페이지로
     }
 
     //즐겨찾기 - 즐겨찾기 추가
     @PostMapping("/bookmarks/add")
-    public String addBookmarks(String user_id, String station_id){
+    public void addBookmarks(String user_id, String station_id){
         memberService.addBookmarks(user_id, station_id);
-        return "members/bookmarks";
     }
 
-    //즐겨찾기 조회 - 특정 이용자의 즐겨찾기 조회 - 이것도 페이징 처리해야 하나
+    //즐겨찾기 조회 - 특정 이용자의 즐겨찾기 조회
     @GetMapping("/bookmarks")
-    public String findBookmarks(String user_id, Model model){
+    public List<Bookmarks> findBookmarks(String user_id){
         List<Bookmarks> list = memberService.findBookmarks(user_id);
-        for(Bookmarks b: list){
-            System.out.println(b.getUser_id() + " " + b.getStation_id());
-        }
-        if(list!=null)
-           model.addAttribute("list", list);
-        return "members/bookmarks";
+        return list;
     }
 
     //즐겨찾기 삭제 - 특정 이용자의 즐겨찾기 삭제
     @PostMapping("/bookmarks/delete")
-    public String deleteBookmarks(String user_id, String station_id){
+    public void deleteBookmarks(String user_id, String station_id){
         memberService.deleteBookmarks(user_id, station_id);
-        return "members/bookmarks";
     }
-
-
 
     // <관리자>
 
-    //1. 회원 조회 및 검색- findAll
+    //1. 회원 관리 페이지 - 회원 조회 및 검색- findAll or 검색함수(검색은 id로)
+    @GetMapping("/admin/user_manage")
+    public List<Member> AdminUserList(String page, Model model, @RequestPart(value = "search", required = false) String searchKeyword){
+        int begin, end, nowPage, pageSize = 10;
 
+        if ( page == null || page.equals("")) {
+            nowPage = 1;
+        } else {
+            nowPage = Integer.parseInt(page);
+        }
 
+        // 현재 페이지에서 가져올 시작 위치 구하기
+        begin = ( (nowPage - 1) * pageSize ) + 1;
+        // 게시물 끝 위치 찾기
+        end = begin + pageSize - 1;
 
+        int startPage, endPage;
 
+        if(searchKeyword == null) //검색하지 않고 조회
+        {
+            List <Member> list = null;
+            list = memberService.findAll(begin, end);
+            int totalMember = list.size(); //전체 게시글 수
+            startPage = Math.max(nowPage - 4, 1);
+            endPage = Math.min(nowPage + 5, totalMember / pageSize + 1);
+            model.addAttribute("list", list);
+            return list;
+        }
+        else {
+            List <Member> list = new ArrayList<Member>();
+            Optional <Member> member;
+            member = memberService.findById(searchKeyword); //검색하여 조회
+            if(!member.isEmpty()) {
+                Member mem = member.get();
+                list.add(mem);
+                model.addAttribute("list", list);
+            }
+            else model.addAttribute("message", "존재하지 않는 이용자입니다.");
+            startPage = 1;
+            endPage = 1;
+            return list;
+        }
+        /*model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);*/
+    }
 
+    //2. 월 별 회원 가입수 그래프 - created_at column 추가함
+    @GetMapping("/admin/dashboard/memGraph")
+    public HashMap<Integer, Integer> AdminMemGraph(){
+        HashMap<Integer, Integer> list = memberService.getMemGraph();
+        return list; //<월, 가입자수> 형태
+    }
 
 }

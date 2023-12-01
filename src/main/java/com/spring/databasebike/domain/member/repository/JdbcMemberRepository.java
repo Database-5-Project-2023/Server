@@ -4,6 +4,7 @@ import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
 import com.spring.databasebike.domain.post.entity.Post;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,15 +110,57 @@ public class JdbcMemberRepository implements MemberRepository {
         return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
     }
     @Override
-    public List<History> getSearchHistoryList(String id, String year, String month, int start, int end) {
-        String sql = "SELECT * FROM (\n" +
-                "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                "    FROM (\n" +
-                "        SELECT * FROM usage_history WHERE user_id = ? and DATE(starting_time) >= DATE(?) and DATE(arrival_time) <= DATE(?)\n" +
-                "    ) N\n" +
-                ") AS T\n" +
-                "WHERE NUM BETWEEN ? AND ?;";
-        return jdbcTemplate.query(sql, HistoryRowMapper(), id, year, month, start, end);
+    public List<History> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end) {
+        String sql = "";
+        if(period!=null) {
+            if(period.equals("1 week")) {
+                sql = "SELECT * FROM (\n" +
+                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+                        "    FROM (\n" +
+                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 7 day)\n" +
+                        "    ) N\n" +
+                        ") AS T\n" +
+                        "WHERE NUM BETWEEN ? AND ?;";
+            }
+            else if(period.equals("1 month")){
+                sql = "SELECT * FROM (\n" +
+                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+                        "    FROM (\n" +
+                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 1 month)\n" +
+                        "    ) N\n" +
+                        ") AS T\n" +
+                        "WHERE NUM BETWEEN ? AND ?;";
+            }
+            else if(period.equals("3 month")){
+                sql = "SELECT * FROM (\n" +
+                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+                        "    FROM (\n" +
+                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 3 month)\n" +
+                        "    ) N\n" +
+                        ") AS T\n" +
+                        "WHERE NUM BETWEEN ? AND ?;";
+            }
+            else if(period.equals("6 month")){
+                sql = "SELECT * FROM (\n" +
+                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+                        "    FROM (\n" +
+                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 6 month)\n" +
+                        "    ) N\n" +
+                        ") AS T\n" +
+                        "WHERE NUM BETWEEN ? AND ?;";
+            }
+            return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
+        }
+        else{
+            sql = "SELECT * FROM (\n" +
+                    "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+                    "    FROM (\n" +
+                    "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date(?) and date(arrival_time) <= date(?)\n" +
+                    "    ) N\n" +
+                    ") AS T\n" +
+                    "WHERE NUM BETWEEN ? AND ?;";
+            return jdbcTemplate.query(sql, HistoryRowMapper(), id, start_date, end_date, start, end);
+        }
     }
 
     @Override
@@ -138,9 +182,33 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public List<Member> findAll() { //전체 회원 조회
+    public List<Member> findAll(int begin, int end) { //전체 회원 조회
+        String sql = "SELECT * FROM (\n" +
+                "    SELECT ROW_NUMBER() OVER (ORDER BY user_name) AS NUM, N.*\n" +
+                "    FROM (\n" +
+                "        SELECT * FROM members\n" +
+                "    ) N\n" +
+                ") AS T\n" +
+                "WHERE NUM BETWEEN ? AND ?;";
+        return jdbcTemplate.query(sql, MemberRowMapper(), begin, end);
+    }
 
-        return jdbcTemplate.query("select * from members", MemberRowMapper());
+    @Override
+    public HashMap<Integer, Integer> getMemGraph() {
+        HashMap<Integer, Integer> list = new HashMap<>();
+
+        for(int i = 1; i <= 12; i++){
+            String s;
+            if(i<10)
+                    s = "2023-0" + Integer.toString(i);
+            else
+                s = "2023-" + Integer.toString(i);
+
+            String sql = "select count(*) from members where date_format(created_at, '%Y-%m') = ?";
+            Integer count = jdbcTemplate.queryForObject(sql, Integer.class, s);
+            list.put(i, count);
+        }
+        return list;
     }
 
     private RowMapper<Member> MemberRowMapper() {
@@ -154,10 +222,10 @@ public class JdbcMemberRepository implements MemberRepository {
             member.setEmail(rs.getString("user_email"));
             member.setPhone_num(rs.getString("user_phone_num"));
             member.setAge(rs.getInt("age"));
-            //member.setGender(Gender.valueOf(rs.getString("gender")));
             member.setGender(rs.getString("gender"));
             member.setBike_borrow_status(rs.getBoolean("bike_borrow_status"));
             member.setUser_status(rs.getBoolean("user_status"));
+            member.setCreated_at(rs.getTimestamp("created_at"));
             return member;
         }; }
 
