@@ -73,12 +73,17 @@ public class StationController {
      * @return
      */
     @PostMapping("/station/return/bike")
-    public String borrowGeneralBike(@RequestPart("bikeReq") ReturnGeneralBikeReq bikeReq,
+    public String returnGeneralBike(@RequestPart("bikeReq") ReturnGeneralBikeReq bikeReq,
                                     @RequestPart("member") String memberId) {
 
         stationService.returnGeneralBike(bikeReq, memberId);
 
         return bikeReq.getArrival_station_id();
+    }
+
+    @GetMapping("/station/location")
+    public List<StationLocation> getStationListByLocation(){
+        return stationService.getStationListByLocation();
     }
 
     /**
@@ -129,7 +134,16 @@ public class StationController {
         return stationService.findByStationId(String.valueOf(stationId));
     }
 
-    // TODO: 대여소 검색: 이름으로 -> 결과는 아이디랑 이름만 출력 (Like 사용할 것)
+    /**
+     * 대여소 검색
+     * @param searchStationReq
+     * @return
+     */
+    // TODO: 대여소 검색: 이름으로 -> 결과는 아이디랑 이름만 출력
+    @GetMapping("/station/search")
+    public List<SearchStationRes> searchStationByAddress(@RequestPart("req") SearchStationReq searchStationReq){
+        return stationService.searchStationByAddress(searchStationReq.getStation_address());
+    }
 
     // TODO: 고장 신고
 
@@ -137,7 +151,7 @@ public class StationController {
      * 관리자: 따릉이 대여 빈도 수 높은 곳
      * @return
      */
-    @GetMapping("/admin/dashboard/LowRentStation")
+    @GetMapping("/admin/dashboard/highRentStation")
     public List<Station> getStationByLoanCount() {
         return stationService.getStationByLoanCount();
     }

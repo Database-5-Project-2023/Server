@@ -1,6 +1,8 @@
 package com.spring.databasebike.domain.bike.controller;
 
+import com.spring.databasebike.config.BaseResponse;
 import com.spring.databasebike.domain.bike.entity.CreateBikeReq;
+import com.spring.databasebike.domain.bike.entity.ReportBikeReq;
 import com.spring.databasebike.domain.bike.service.BikeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +33,11 @@ public class BikeController {
     }
 
     @PostMapping("/bike/report")
-    public String reportBike(@RequestBody String bikeId) {
+    public BaseResponse<String> reportBike(@RequestBody ReportBikeReq reportBikeReq) {
 
-        bikeService.reportBike(bikeId);
+        bikeService.reportBike(reportBikeReq.getBike_id());
 
-        return bikeId;
+        return new BaseResponse<>(reportBikeReq.getBike_id());
     }
 
 }
