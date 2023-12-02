@@ -92,7 +92,7 @@ public class JdbcMemberRepository implements MemberRepository {
         jdbcTemplate.update(sql, id);
     }
 
-    @Override
+    /*@Override
     public Integer getTotalHistory(String id){
         String sql = "select count(*) from usage_history where user_id = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, id);
@@ -161,7 +161,7 @@ public class JdbcMemberRepository implements MemberRepository {
                     "WHERE NUM BETWEEN ? AND ?;";
             return jdbcTemplate.query(sql, HistoryRowMapper(), id, start_date, end_date, start, end);
         }
-    }
+    }*/
 
     @Override
     public void addBookmarks(String user_id, String station_id) {
@@ -226,6 +226,7 @@ public class JdbcMemberRepository implements MemberRepository {
             member.setBike_borrow_status(rs.getBoolean("bike_borrow_status"));
             member.setUser_status(rs.getBoolean("user_status"));
             member.setCreated_at(rs.getTimestamp("created_at"));
+            member.setDistance(rs.getFloat("distance"));
             return member;
         }; }
 

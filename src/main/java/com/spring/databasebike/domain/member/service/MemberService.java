@@ -1,5 +1,6 @@
 package com.spring.databasebike.domain.member.service;
 
+import com.spring.databasebike.domain.history.entity.GetHistoryRes;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
@@ -63,7 +64,7 @@ public class MemberService {
     }
 
     //특정 회원의 대여/반납 이력 조회
-    public List<History> memHistoryList(String id, int start, int end){
+    /*public List<GetHistoryRes> memHistoryList(String id, int start, int end){
         return memberRepository.getHistoryList(id, start, end);
     }
 
@@ -73,9 +74,9 @@ public class MemberService {
     }
 
     //특정 회원의 특정 기간동안의 대여/반납 이력 조회
-    public List<History> memSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end){
+    public List<GetHistoryRes> memSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end){
         return memberRepository.getSearchHistoryList(id, period, start_date, end_date, start, end);
-    }
+    }*/
 
     //회원 탈퇴
     public void deleteMem(String id) { memberRepository.deleteMem(id); }

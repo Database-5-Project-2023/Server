@@ -23,7 +23,7 @@ public class PostController {
 
     //게시판 전체 글 조회 화면 - 문의 게시판
     @GetMapping("/posts") //페이징 처리
-    public List<Post> postList(String page, Model model, @RequestPart(value = "search", required = false) String searchKeyword){
+    public List<Post> postList(String page, @RequestPart(value = "search", required = false) String searchKeyword){
         int begin, end, nowPage, pageSize = 10;
 
         List <Post> list = null;
@@ -48,11 +48,6 @@ public class PostController {
         int startPage = Math.max(nowPage - 4, 1);
         int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
 
-        model.addAttribute("list", list);
-        model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-
         /*for(Post p: list){
             System.out.println(p.getPost_id() + " " + p.getCreator_id() + " " + p.getTitle() + " " + p.getContent());
         }*/
@@ -67,11 +62,10 @@ public class PostController {
     }*/
 
     @PostMapping("/posts/write") //작성한 게시글 저장
-    public void postWrite(@RequestPart("post") Post p, @RequestPart(value = "image", required = false) MultipartFile multipartFile, Model model) throws Exception{
+    public void postWrite(@RequestPart("post") Post p, @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws Exception{
 
         p.setFileName(awsS3Service.uploadImage(multipartFile));
         postService.writePost(p);
-        model.addAttribute("message", "글 작성이 완료되었습니다.");
     }
 
     //특정 게시글 조회 화면
@@ -120,7 +114,7 @@ public class PostController {
 
     //마이 페이지 - (해당 유저에 대한) 작성글 조회
     @GetMapping("/members/page/post") //페이징 처리
-    public List<Post> getMemPost(String id, String page, Model model){
+    public List<Post> getMemPost(String id, String page){
 
         int begin, end, nowPage, pageSize = 10;
 
@@ -148,10 +142,6 @@ public class PostController {
             System.out.println(data.getTitle());
         }*/
 
-        model.addAttribute("list", list);
-        model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
 
         return list; //해당 유저가 쓴 게시글 조회 화면
     }
@@ -168,7 +158,7 @@ public class PostController {
 
     //관리자 페이지 - 게시글 검색 및 조회
     @GetMapping("/admin/post_manage") //페이징 처리
-    public List<Post> AdminpostList(String page, Model model, @RequestPart(value = "search", required = false) String searchKeyword){
+    public List<Post> AdminpostList(String page, @RequestPart(value = "search", required = false) String searchKeyword){
         int begin, end, nowPage, pageSize = 10; //수정 - 10으로
 
         List <Post> list = null;
@@ -192,11 +182,6 @@ public class PostController {
 
         int startPage = Math.max(nowPage - 4, 1);
         int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
-
-        model.addAttribute("list", list);
-        model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
 
         return list;
     }

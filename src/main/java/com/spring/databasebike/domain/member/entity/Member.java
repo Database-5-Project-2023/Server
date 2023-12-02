@@ -47,5 +47,6 @@ public class Member {
     @MappedCollection(idColumn = "user_id", keyColumn = "user_id")
     private List<Bookmarks> bookmarks;
 
+    private Float distance;
 
 }
