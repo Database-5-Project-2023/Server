@@ -13,6 +13,10 @@ public interface HistoryRepository {
 
     void updateHistory(ReturnGeneralBikeReq returnGeneralBikeReq, String memberId);
 
+    List<History> getHistoryList(String id, int start, int end);
+
+    List<History> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end);
+
     History findHistoryByBikeId(String bikeId);
 
     List<History> findHistoryByUserId(String memberId);

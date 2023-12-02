@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -174,7 +173,6 @@ public class JdbcStationRepository implements StationRepository {
         return (rs, rowNum) -> {
             Station station = new Station();
 
-            // station.setId(rs.getLong("id"));
             station.setStation_id(rs.getString("station_id"));
             station.setStation_addr1(rs.getString("station_addr1"));
             station.setStation_addr2(rs.getString("station_addr2"));
@@ -194,7 +192,6 @@ public class JdbcStationRepository implements StationRepository {
         return (rs, rowNum) -> {
             StationLocation stationLocation = new StationLocation();
 
-            // station.setId(rs.getLong("id"));
             stationLocation.setStation_id(rs.getString("station_id"));
             stationLocation.setStation_latitude(rs.getFloat("station_latitude"));
             stationLocation.setStation_longitude(rs.getFloat("station_longitude"));
@@ -230,7 +227,6 @@ public class JdbcStationRepository implements StationRepository {
         return (rs, rowNum) -> {
             Bike bike = new Bike();
 
-            // station.setId(rs.getLong("id"));
             bike.setBike_id(rs.getString("bike_id"));
             bike.setStation_id(rs.getString("station_id"));
             bike.setBike_type(rs.getString("bike_type"));

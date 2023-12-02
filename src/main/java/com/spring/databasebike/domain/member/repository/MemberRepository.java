@@ -1,5 +1,6 @@
 package com.spring.databasebike.domain.member.repository;
 
+import com.spring.databasebike.domain.history.entity.GetHistoryRes;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
@@ -29,9 +30,9 @@ public interface MemberRepository {
 
     Integer getTotalHistory(String id); //해당 유저의 대여/반납 이력의 총 갯수
 
-    List<History> getHistoryList(String id, int start, int end); //해당 유저의 대여/반납 이력 조회
+    // List<GetHistoryRes> getHistoryList(String id, int start, int end); //해당 유저의 대여/반납 이력 조회
 
-    List<History> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end); //해당 이용자의 특정 기간동안의 대여/반납 이력 조회
+    // List<GetHistoryRes> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end); //해당 이용자의 특정 기간동안의 대여/반납 이력 조회
 
     void deleteMem(String id); //회원 탈퇴
 

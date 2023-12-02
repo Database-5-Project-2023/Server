@@ -98,70 +98,71 @@ public class JdbcMemberRepository implements MemberRepository {
         return jdbcTemplate.queryForObject(sql, Integer.class, id);
     }
 
-    @Override
-    public List<History> getHistoryList(String id, int start, int end) {
-        String sql = "SELECT * FROM (\n" +
-                "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                "    FROM (\n" +
-                "        SELECT * FROM usage_history WHERE user_id = ?\n" +
-                "    ) N\n" +
-                ") AS T\n" +
-                "WHERE NUM BETWEEN ? AND ?;";
-        return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
-    }
-    @Override
-    public List<History> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end) {
-        String sql = "";
-        if(period!=null) {
-            if(period.equals("1 week")) {
-                sql = "SELECT * FROM (\n" +
-                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                        "    FROM (\n" +
-                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 7 day)\n" +
-                        "    ) N\n" +
-                        ") AS T\n" +
-                        "WHERE NUM BETWEEN ? AND ?;";
-            }
-            else if(period.equals("1 month")){
-                sql = "SELECT * FROM (\n" +
-                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                        "    FROM (\n" +
-                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 1 month)\n" +
-                        "    ) N\n" +
-                        ") AS T\n" +
-                        "WHERE NUM BETWEEN ? AND ?;";
-            }
-            else if(period.equals("3 month")){
-                sql = "SELECT * FROM (\n" +
-                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                        "    FROM (\n" +
-                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 3 month)\n" +
-                        "    ) N\n" +
-                        ") AS T\n" +
-                        "WHERE NUM BETWEEN ? AND ?;";
-            }
-            else if(period.equals("6 month")){
-                sql = "SELECT * FROM (\n" +
-                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                        "    FROM (\n" +
-                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 6 month)\n" +
-                        "    ) N\n" +
-                        ") AS T\n" +
-                        "WHERE NUM BETWEEN ? AND ?;";
-            }
-            return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
-        }
-        else{
-            sql = "SELECT * FROM (\n" +
-                    "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                    "    FROM (\n" +
-                    "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date(?) and date(arrival_time) <= date(?)\n" +
-                    "    ) N\n" +
-                    ") AS T\n" +
-                    "WHERE NUM BETWEEN ? AND ?;";
-            return jdbcTemplate.query(sql, HistoryRowMapper(), id, start_date, end_date, start, end);
-        }
-    }
+//    @Override
+//    public List<History> getHistoryList(String id, int start, int end) {
+//        String sql = "SELECT * FROM (\n" +
+//                "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+//                "    FROM (\n" +
+//                "        SELECT * FROM usage_history WHERE user_id = ?\n" +
+//                "    ) N\n" +
+//                ") AS T\n" +
+//                "WHERE NUM BETWEEN ? AND ?;";
+//        return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
+//    }
+//
+//    @Override
+//    public List<History> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end) {
+//        String sql = "";
+//        if(period!=null) {
+//            if(period.equals("1 week")) {
+//                sql = "SELECT * FROM (\n" +
+//                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+//                        "    FROM (\n" +
+//                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 7 day)\n" +
+//                        "    ) N\n" +
+//                        ") AS T\n" +
+//                        "WHERE NUM BETWEEN ? AND ?;";
+//            }
+//            else if(period.equals("1 month")){
+//                sql = "SELECT * FROM (\n" +
+//                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+//                        "    FROM (\n" +
+//                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 1 month)\n" +
+//                        "    ) N\n" +
+//                        ") AS T\n" +
+//                        "WHERE NUM BETWEEN ? AND ?;";
+//            }
+//            else if(period.equals("3 month")){
+//                sql = "SELECT * FROM (\n" +
+//                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+//                        "    FROM (\n" +
+//                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 3 month)\n" +
+//                        "    ) N\n" +
+//                        ") AS T\n" +
+//                        "WHERE NUM BETWEEN ? AND ?;";
+//            }
+//            else if(period.equals("6 month")){
+//                sql = "SELECT * FROM (\n" +
+//                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+//                        "    FROM (\n" +
+//                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 6 month)\n" +
+//                        "    ) N\n" +
+//                        ") AS T\n" +
+//                        "WHERE NUM BETWEEN ? AND ?;";
+//            }
+//            return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
+//        }
+//        else{
+//            sql = "SELECT * FROM (\n" +
+//                    "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
+//                    "    FROM (\n" +
+//                    "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date(?) and date(arrival_time) <= date(?)\n" +
+//                    "    ) N\n" +
+//                    ") AS T\n" +
+//                    "WHERE NUM BETWEEN ? AND ?;";
+//            return jdbcTemplate.query(sql, HistoryRowMapper(), id, start_date, end_date, start, end);
+//        }
+//    }
 
     @Override
     public void addBookmarks(String user_id, String station_id) {
