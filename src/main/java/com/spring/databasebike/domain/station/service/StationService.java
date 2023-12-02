@@ -1,6 +1,7 @@
 package com.spring.databasebike.domain.station.service;
 
 import com.spring.databasebike.domain.bike.entity.Bike;
+import com.spring.databasebike.domain.history.entity.CreateHistoryReq;
 import com.spring.databasebike.domain.history.repository.HistoryRepository;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.station.entity.*;
@@ -58,14 +59,14 @@ public class StationService {
         stationRepository.borrowGeneralBike(bikeReq, memberId);
         // });
 
-//        CreateHistoryReq createHistoryReq = new CreateHistoryReq();
-//        createHistoryReq.setUser_id(memberId);
-//        createHistoryReq.setBike_id(bikeReq.getBike_id());
-//        createHistoryReq.setArrival_station_id(bikeReq.getStarting_station_id());
-//        createHistoryReq.setStarting_time(LocalDateTime.now());
-//        createHistoryReq.setReturn_status(false);
+        CreateHistoryReq createHistoryReq = new CreateHistoryReq();
+        createHistoryReq.setUser_id(memberId);
+        createHistoryReq.setBike_id(bikeReq.getBike_id());
+        createHistoryReq.setStarting_station_id(bikeReq.getStarting_station_id());
+        createHistoryReq.setStarting_time(LocalDateTime.now());
+        createHistoryReq.setReturn_status(false);
 
-        // historyRepository.createHistory(bikeReq, memberId);
+        historyRepository.createHistory(createHistoryReq);
     }
 
     public void returnGeneralBike(ReturnGeneralBikeReq bikeReq, String memberId) {
@@ -78,15 +79,14 @@ public class StationService {
         bikeReq.setBike_id(bikeReq.getBike_id());
         bikeReq.setArrival_station_id(bikeReq.getArrival_station_id());
         bikeReq.setArrival_time(LocalDateTime.now().toString());
-
-        // History history = historyRepository.findHistoryByBikeId(bikeReq.getBike_id());
-        // Float distance = calculateDistance(history.getStarting_station_id(), bikeReq.getArrival_station_id());
-        // bikeReq.setDistance(distance);
-
         stationRepository.returnGeneralBike(bikeReq, memberId);
+
+        History history = historyRepository.findHistoryByBikeId(bikeReq.getBike_id());
+        Float distance = calculateDistance(history.getStarting_station_id(), bikeReq.getArrival_station_id());
+        bikeReq.setDistance(distance);
         // });
 
-        // historyRepository.updateHistory(bikeReq, memberId);
+        historyRepository.updateHistory(bikeReq, memberId);
     }
 
     public Float calculateDistance(String starting_station_id, String arrival_station_id) {

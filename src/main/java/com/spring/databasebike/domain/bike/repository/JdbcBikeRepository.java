@@ -75,6 +75,15 @@ public class JdbcBikeRepository implements BikeRepository {
         return result.get(0);
     }
 
+    @Override
+    public List<Bike> getListByBikeId(String bikeId) {
+        String sql = "select * from bike where bike_id LIKE ?";
+
+        List<Bike> result = jdbcTemplate.query(sql, bikeRowMapper(), "%" + bikeId + "%");
+
+        return result;
+    }
+
     private RowMapper<Bike> bikeRowMapper() {
         return (rs, rowNum) -> {
             Bike bike = new Bike();
