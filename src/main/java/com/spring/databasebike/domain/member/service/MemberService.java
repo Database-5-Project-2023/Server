@@ -7,6 +7,7 @@ import com.spring.databasebike.domain.member.repository.MemberRepository;
 import com.spring.databasebike.domain.post.entity.Post;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,8 +73,8 @@ public class MemberService {
     }
 
     //특정 회원의 특정 기간동안의 대여/반납 이력 조회
-    public List<History> memSearchHistoryList(String id, String year, String month, int start, int end){
-        return memberRepository.getSearchHistoryList(id, year, month, start, end);
+    public List<History> memSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end){
+        return memberRepository.getSearchHistoryList(id, period, start_date, end_date, start, end);
     }
 
     //회원 탈퇴
@@ -90,9 +91,9 @@ public class MemberService {
 
 
     //회원 목록 조회
-    public List<Member> findAll(){
-        return memberRepository.findAll();
+    public List<Member> findAll(int begin, int end){
+        return memberRepository.findAll(begin, end);
     }
 
-
+    public HashMap<Integer, Integer> getMemGraph(){return memberRepository.getMemGraph();}
 }
