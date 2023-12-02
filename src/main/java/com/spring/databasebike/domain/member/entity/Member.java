@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -37,6 +38,8 @@ public class Member {
     private Boolean bike_borrow_status;
 
     private Boolean user_status;
+
+    private Timestamp created_at;
 
     @MappedCollection(idColumn = "user_id", keyColumn = "usage_history_num")
     private List<History> history;
