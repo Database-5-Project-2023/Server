@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,9 +114,33 @@ public class JdbcStationRepository implements StationRepository {
     }
 
     @Override
-    public Optional<Station> findByBorough(String borough) {
-        List<Station> result = jdbcTemplate.query("select * from station where borough = ?", stationRowMapper(), borough);
-        return result.stream().findAny();
+    public List<GetStationBoroughRes> findByBorough() {
+
+        String viewName = "station_loan_count";
+
+        if(!checkDuplicateView(viewName)) {
+            String sql = "CREATE VIEW station_loan_count (borough, station_loan_count) AS\n"
+                    + "SELECT s.borough, SUM(s.loan_count)\n"
+                    + "FROM station as s\n"
+                    + "GROUP BY s.borough\n"
+                    + "ORDER BY SUM(s.loan_count) DESC";
+
+            jdbcTemplate.update(sql);
+        }
+
+        String viewSql = "SELECT * FROM station_loan_count";
+
+        List<GetStationBoroughRes> result = jdbcTemplate.query(viewSql, stationBoroughRowMapper());
+
+        return result;
+    }
+
+    private boolean checkDuplicateView(String viewName) {
+        String sql = "SELECT COUNT(*) FROM information_schema.views WHERE table_name = ?";
+
+        int count = jdbcTemplate.queryForObject(sql, Integer.class, viewName);
+
+        return count != 0;
     }
 
     @Override
@@ -187,6 +212,17 @@ public class JdbcStationRepository implements StationRepository {
             station.setStation_addr2(rs.getString("station_addr2"));
 
             return station;
+        };
+    }
+
+    private RowMapper<GetStationBoroughRes> stationBoroughRowMapper() {
+        return (rs, rowNum) -> {
+            GetStationBoroughRes stationBoroughRes = new GetStationBoroughRes();
+
+            stationBoroughRes.setBorough(rs.getString("borough"));
+            stationBoroughRes.setLoan_count(rs.getInt("station_loan_count"));
+
+            return stationBoroughRes;
         };
     }
 

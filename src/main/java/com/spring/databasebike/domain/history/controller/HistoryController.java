@@ -1,5 +1,6 @@
 package com.spring.databasebike.domain.history.controller;
 
+import com.spring.databasebike.domain.history.entity.GetHistoryRes;
 import com.spring.databasebike.domain.history.service.HistoryService;
 import com.spring.databasebike.domain.member.entity.History;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class HistoryController {
     }
 
     @GetMapping("/history/{memberId}")
-    public List<History> getHistoryList(@PathVariable String memberId){
+    public List<GetHistoryRes> getHistoryList(@PathVariable String memberId){
         return historyService.findHistoryByUserId(memberId);
     }
 

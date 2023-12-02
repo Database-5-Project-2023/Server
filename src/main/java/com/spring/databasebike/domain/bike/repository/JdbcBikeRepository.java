@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +25,12 @@ public class JdbcBikeRepository implements BikeRepository {
 
     @Override
     public void save(CreateBikeReq createBikeReq) {
-        String sql = "INSERT INTO bike (bike_id, station_id, bike_type, bike_status) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO bike (bike_id, station_id, bike_type, bike_status, updated_at) VALUES (?, ?, ?, ?, ?)";
 
         Object[] createStationParams = new Object[] {
                 String.valueOf(createBikeReq.getBike_id()),
                 createBikeReq.getStation_id(),
-                createBikeReq.getBike_type(), false
+                createBikeReq.getBike_type(), false, LocalDateTime.now()
         };
 
 
@@ -84,6 +85,17 @@ public class JdbcBikeRepository implements BikeRepository {
         return result;
     }
 
+    @Override
+    public List<Bike> getListByBikeStatus() {
+        String sql = "SELECT station_id, bike_id, bike_type, bike_status " +
+                "FROM bike JOIN station using(station_id) " +
+                "WHERE bike.bike_status = ? ORDER BY bike.updated_at DESC";
+
+        List<Bike> result = jdbcTemplate.query(sql, bikeRowMapper(), true);
+
+        return result;
+    }
+
     private RowMapper<Bike> bikeRowMapper() {
         return (rs, rowNum) -> {
             Bike bike = new Bike();
@@ -97,5 +109,4 @@ public class JdbcBikeRepository implements BikeRepository {
             return bike;
         };
     }
-
 }

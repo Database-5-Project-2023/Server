@@ -152,6 +152,10 @@ public class StationService {
         return stationResList;
     }
 
+    public List<GetStationBoroughRes> getStationByBorough() {
+        return stationRepository.findByBorough();
+    }
+
     public List<StationLocation> getStationListByLocation(){
         return stationRepository.getStationListByLocation();
     }
