@@ -157,6 +157,15 @@ public class StationController {
     }
 
     /**
+     * 관리자: 따릉이 대여 빈도 수 높은 곳(자치구 별)
+     * @return
+     */
+    @GetMapping("/admin/dashboard/borough")
+    public List<GetStationBoroughRes> getStationByBorough() {
+        return stationService.getStationByBorough();
+    }
+
+    /**
      * 관리자: 대여소 폐쇄
      * @param stationId
      * @return
