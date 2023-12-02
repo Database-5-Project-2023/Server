@@ -56,6 +56,12 @@ public class JdbcHistoryRepository implements HistoryRepository {
     }
 
     @Override
+    public Integer getTotalHistory(String id){
+        String sql = "select count(*) from usage_history where user_id = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, id);
+    }
+
+    @Override
     public List<History> getHistoryList(String id, int start, int end) {
         String sql = "SELECT * FROM (\n" +
                 "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +

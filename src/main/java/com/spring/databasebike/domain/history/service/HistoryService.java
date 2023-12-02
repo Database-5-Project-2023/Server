@@ -74,6 +74,11 @@ public class HistoryService {
         return historyResList;
     }
 
+    //특정 회원의 대여/반납 이력 개수
+    public Integer memHistoryNum(String id){
+        return historyRepository.getTotalHistory(id);
+    }
+
     //특정 회원의 특정 기간동안의 대여/반납 이력 조회
     public List<GetHistoryRes> memSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end){
         List<History> result = historyRepository.getSearchHistoryList(id, period, start_date, end_date, start, end);

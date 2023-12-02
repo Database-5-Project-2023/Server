@@ -1,5 +1,6 @@
 package com.spring.databasebike.domain.member.controller;
 
+import com.spring.databasebike.domain.history.service.HistoryService;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
@@ -27,6 +28,9 @@ public class MemberController {
     private HttpSession httpSession;
 
     private MemberService memberService;
+
+    @Autowired
+    private HistoryService historyService;
 
     @Autowired
     public MemberController(MemberService memberService){
@@ -113,46 +117,46 @@ public class MemberController {
         return mem; //수정한 이용자 반환
     }
 
-//    //마이 페이지 - 대여 및 반납 이력 조회(기간별 조회 가능)
-//    @GetMapping("/history")
-//    public List<History> getMemHistory(String id, String page, @RequestParam(value = "period", required = false) String period, @RequestParam(value="start_date", required = false) String start_date, @RequestParam(value="end_date", required = false) String end_date, Model model){
-//
-//        //1. 기간 검색 없이 전체 조회
-//        //2. 1주일, 1개월, 3개월, 6개월 중 하나를 선택하여 조회하고자 하는 경우(period에 1 week, 1 month, 3 month, 6 month로 넣어서 전달)
-//        //3. start_date와 end_date에 특정 연도와 날짜를 지정하여 검색하는 경우
-//
-//        int begin, end, nowPage, pageSize = 10;
-//
-//        List<History> list = null;
-//
-//        if ( page == null || page.equals("")) {
-//            nowPage = 1;
-//        } else {
-//            nowPage = Integer.parseInt(page);
-//        }
-//
-//        // 현재 페이지에서 가져올 시작 위치 구하기
-//        begin = ( (nowPage - 1) * pageSize ) + 1;
-//        // 이력의 끝 위치 찾기
-//        end = begin + pageSize - 1;
-//
-//        int totalPost = memberService.memHistoryNum(id);
-//
-//        int startPage = Math.max(nowPage - 4, 1);
-//        int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
-//
-//        if(period == null && start_date == null && end_date == null) { //기간 검색하지 않는 경우
-//            list = memberService.memHistoryList(id, begin, end);
-//        }else { //검색 하는 경우
-//            list = memberService.memSearchHistoryList(id, period, start_date, end_date, begin, end);
-//        }
-//
-//        model.addAttribute("nowPage", nowPage);
-//        model.addAttribute("startPage", startPage);
-//        model.addAttribute("endPage", endPage);
-//
-//        return list;
-//    }
+    //마이 페이지 - 대여 및 반납 이력 조회(기간별 조회 가능)
+    /*@GetMapping("/history")
+    public List<GetHistoryRes> getMemHistory(String id, String page, @RequestParam(value = "period", required = false) String period, @RequestParam(value="start_date", required = false) String start_date, @RequestParam(value="end_date", required = false) String end_date){
+
+        //1. 기간 검색 없이 전체 조회
+        //2. 1주일, 1개월, 3개월, 6개월 중 하나를 선택하여 조회하고자 하는 경우(period에 1 week, 1 month, 3 month, 6 month로 넣어서 전달)
+        //3. start_date와 end_date에 특정 연도와 날짜를 지정하여 검색하는 경우
+
+        int begin, end, nowPage, pageSize = 10;
+
+        List<GetHistoryRes> list = historyService.findHistoryByUserId(id);
+
+        if ( page == null || page.equals("")) {
+            nowPage = 1;
+        } else {
+            nowPage = Integer.parseInt(page);
+        }
+
+        // 현재 페이지에서 가져올 시작 위치 구하기
+        begin = ( (nowPage - 1) * pageSize ) + 1;
+        // 이력의 끝 위치 찾기
+        end = begin + pageSize - 1;
+
+        int totalPost = memberService.memHistoryNum(id);
+
+        int startPage = Math.max(nowPage - 4, 1);
+        int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
+
+        if(period == null && start_date == null && end_date == null) { //기간 검색하지 않는 경우
+            list = memberService.memHistoryList(id, begin, end);
+        }else { //검색 하는 경우
+            list = memberService.memSearchHistoryList(id, period, start_date, end_date, begin, end);
+        }
+
+        //model.addAttribute("nowPage", nowPage);
+        //model.addAttribute("startPage", startPage);
+        //model.addAttribute("endPage", endPage);
+
+        return list;
+    }*/
 
     //마이 페이지 - 작성글 조회 - PostController에 구현
 
@@ -180,7 +184,7 @@ public class MemberController {
 
     //마이 페이지 - 탈퇴
     @GetMapping("members/delete")
-    public Optional<Member> deleteForm(String id, Model model){
+    public Optional<Member> deleteForm(String id){
         Optional<Member> mem = memberService.findById(id); //일치하는 id를 가진 회원 정보를 가져와
         return mem;
     }
@@ -218,7 +222,7 @@ public class MemberController {
 
     //1. 회원 관리 페이지 - 회원 조회 및 검색- findAll or 검색함수(검색은 id로)
     @GetMapping("/admin/user_manage")
-    public List<Member> AdminUserList(String page, Model model, @RequestPart(value = "search", required = false) String searchKeyword){
+    public List<Member> AdminUserList(String page, @RequestPart(value = "search", required = false) String searchKeyword){
         int begin, end, nowPage, pageSize = 10;
 
         if ( page == null || page.equals("")) {
@@ -241,7 +245,6 @@ public class MemberController {
             int totalMember = list.size(); //전체 게시글 수
             startPage = Math.max(nowPage - 4, 1);
             endPage = Math.min(nowPage + 5, totalMember / pageSize + 1);
-            model.addAttribute("list", list);
             return list;
         }
         else {
@@ -251,9 +254,7 @@ public class MemberController {
             if(!member.isEmpty()) {
                 Member mem = member.get();
                 list.add(mem);
-                model.addAttribute("list", list);
             }
-            else model.addAttribute("message", "존재하지 않는 이용자입니다.");
             startPage = 1;
             endPage = 1;
             return list;

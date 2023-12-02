@@ -18,12 +18,9 @@ public class HistoryController {
 
     private final HistoryService historyService;
 
-    private final MemberService memberService;
-
     @Autowired
-    public HistoryController(HistoryService historyService, MemberService memberService){
+    public HistoryController(HistoryService historyService){
         this.historyService = historyService;
-        this.memberService = memberService;
     }
 
     //마이 페이지 - 대여 및 반납 이력 조회(기간별 조회 가능)
@@ -49,7 +46,7 @@ public class HistoryController {
         // 이력의 끝 위치 찾기
         end = begin + pageSize - 1;
 
-        int totalPost = memberService.memHistoryNum(id);
+        int totalPost = historyService.memHistoryNum(id);
 
         int startPage = Math.max(nowPage - 4, 1);
         int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
