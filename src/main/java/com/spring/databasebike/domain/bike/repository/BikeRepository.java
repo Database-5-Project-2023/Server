@@ -14,4 +14,5 @@ public interface BikeRepository {
     Optional<Bike> findById(String bikeId);
     Bike findByBikeId(String bikeId);
     List<Bike> getListByBikeId(String bikeId);
+    List<Bike> getListByBikeStatus();
 }

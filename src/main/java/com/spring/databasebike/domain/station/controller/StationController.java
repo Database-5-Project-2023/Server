@@ -145,7 +145,7 @@ public class StationController {
         return stationService.searchStationByAddress(searchStationReq.getStation_address());
     }
 
-    // TODO: 고장 신고
+    // TODO: 고장 신고 -> BikeController에 작성
 
     /**
      * 관리자: 따릉이 대여 빈도 수 높은 곳

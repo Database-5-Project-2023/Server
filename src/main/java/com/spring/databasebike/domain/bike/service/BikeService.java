@@ -55,4 +55,21 @@ public class BikeService {
 
         return bikeResList;
     }
+
+    public List<SearchBikeRes> getListByBikeStatus() {
+        List<Bike> result = bikeRepository.getListByBikeStatus();
+
+        List<SearchBikeRes> bikeResList = new ArrayList<>();
+
+        for(Bike bike: result){
+            SearchBikeRes bikeRes = new SearchBikeRes();
+            bikeRes.setBike_id(bike.getBike_id());
+            bikeRes.setStation_id(bike.getStation_id());
+            bikeRes.setBike_type(bike.getBike_type());
+            bikeRes.setBike_status(String.valueOf(bike.isBike_status()));
+            bikeResList.add(bikeRes);
+        }
+
+        return bikeResList;
+    }
 }

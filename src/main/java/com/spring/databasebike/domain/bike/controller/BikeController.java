@@ -55,4 +55,13 @@ public class BikeController {
     public List<SearchBikeRes> searchBikeById(@RequestPart("req") SearchBikeReq searchBikeReq) {
         return bikeService.getListByBikeId(searchBikeReq.getBike_id());
     }
+
+    /**
+     * 관리자: 따릉이 관리 페이지 - 따릉이 고장 신고 최신 순 5개
+     * @return
+     */
+    @GetMapping("/admin/dashboard/RecentBikeReport")
+    public List<SearchBikeRes> searchBikeByBikeStatus() {
+        return bikeService.getListByBikeStatus();
+    }
 }

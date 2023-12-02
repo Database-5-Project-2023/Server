@@ -5,6 +5,7 @@ import com.spring.databasebike.domain.member.entity.History;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -15,7 +16,8 @@ public class Bike {
     private String station_id;
     private String bike_type;
     private boolean bike_status;
-
+    private Timestamp updated_at;
+    
     @MappedCollection(idColumn = "bike_id", keyColumn = "usage_history_num")
     private List<History> history;
 
