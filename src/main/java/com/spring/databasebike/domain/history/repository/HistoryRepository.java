@@ -13,6 +13,12 @@ public interface HistoryRepository {
 
     void updateHistory(ReturnGeneralBikeReq returnGeneralBikeReq, String memberId);
 
+    Integer getTotalHistory(String id); //해당 유저의 대여/반납 이력의 총 갯수
+
+    List<History> getHistoryList(String id, int start, int end);
+
+    List<History> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end);
+
     History findHistoryByBikeId(String bikeId);
 
     List<History> findHistoryByUserId(String memberId);

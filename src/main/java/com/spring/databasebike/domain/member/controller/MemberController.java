@@ -1,6 +1,5 @@
 package com.spring.databasebike.domain.member.controller;
 
-import com.spring.databasebike.domain.history.entity.GetHistoryRes;
 import com.spring.databasebike.domain.history.service.HistoryService;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;

@@ -1,6 +1,5 @@
 package com.spring.databasebike.domain.member.repository;
 
-import com.spring.databasebike.domain.history.entity.GetHistoryRes;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
