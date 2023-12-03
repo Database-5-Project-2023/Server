@@ -15,4 +15,5 @@ public interface BikeRepository {
     Bike findByBikeId(String bikeId);
     List<Bike> getListByBikeId(String bikeId);
     List<Bike> getListByBikeStatus();
+    List<Bike> findAll();
 }
