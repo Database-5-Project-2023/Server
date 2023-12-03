@@ -47,11 +47,20 @@ public class BikeController {
     }
 
     /**
+     * 관리자: 따릉이 목록 조회
+     * @return
+     */
+    @GetMapping("/admin/bike_manage")
+    public List<SearchBikeRes> getBikeList(){
+        return bikeService.findAllBikes();
+    }
+
+    /**
      * 관리자: 따릉이 관리 페이지 - 따릉이 검색
      * @param searchBikeReq
      * @return
      */
-    @GetMapping("/admin/bike_manage")
+    @GetMapping("/admin/bike_manage/search")
     public List<SearchBikeRes> searchBikeById(@RequestPart("req") SearchBikeReq searchBikeReq) {
         return bikeService.getListByBikeId(searchBikeReq.getBike_id());
     }

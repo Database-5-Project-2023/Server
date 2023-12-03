@@ -96,6 +96,11 @@ public class JdbcBikeRepository implements BikeRepository {
         return result;
     }
 
+    @Override
+    public List<Bike> findAll() {
+        return jdbcTemplate.query("select * from bike limit 10", bikeRowMapper());
+    }
+
     private RowMapper<Bike> bikeRowMapper() {
         return (rs, rowNum) -> {
             Bike bike = new Bike();
