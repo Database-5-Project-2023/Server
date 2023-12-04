@@ -2,6 +2,8 @@ package com.spring.databasebike.config;
 
 import com.spring.databasebike.domain.bike.repository.BikeRepository;
 import com.spring.databasebike.domain.bike.repository.JdbcBikeRepository;
+import com.spring.databasebike.domain.comment.repository.CommentRepository;
+import com.spring.databasebike.domain.comment.repository.JdbcCommentRepository;
 import com.spring.databasebike.domain.history.repository.HistoryRepository;
 import com.spring.databasebike.domain.history.repository.JdbcHistoryRepository;
 import com.spring.databasebike.domain.member.repository.JdbcMemberRepository;
@@ -45,4 +47,6 @@ public class JdbcTemplateConfig {
     @Bean
     public HistoryRepository historyRepository(){return new JdbcHistoryRepository(dataSource);}
 
+    @Bean
+    public CommentRepository commentRepository(){return new JdbcCommentRepository(dataSource);}
 }
