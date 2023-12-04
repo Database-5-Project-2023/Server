@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c5f81d99-dd93-422f-b746-6767c41d1609" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/comment/controller/CommentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/comment/entity/Comment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/comment/entity/CreateCommentReq.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/comment/repository/CommentRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/comment/repository/JdbcCommentRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/comment/service/CommentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/controller/BikeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/controller/BikeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/repository/BikeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/repository/BikeRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/repository/JdbcBikeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/repository/JdbcBikeRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/service/BikeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/domain/bike/service/BikeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/JdbcTemplateConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/databasebike/config/JdbcTemplateConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,8 +42,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Enum" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
