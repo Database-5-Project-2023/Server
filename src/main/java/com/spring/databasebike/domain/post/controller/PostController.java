@@ -63,28 +63,28 @@ public class PostController {
 
     @PostMapping("/posts/write") //작성한 게시글 저장
     public void postWrite(@RequestPart("post") Post p, @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws Exception{
-
-        p.setFileName(awsS3Service.uploadImage(multipartFile));
+        if(multipartFile!=null)
+            p.setFileName(awsS3Service.uploadImage(multipartFile));
         postService.writePost(p);
     }
 
     //특정 게시글 조회 화면
     @GetMapping("/posts/view")
-    public Post postView(int num){ //몇번째 게시글인지 받아옴-num(0부터 시작함)
-        Post post = postService.findByPostNum(num);
+    public Post postView(int post_id){
+        Post post = postService.findByPostId(post_id);
         return post;
     }
 
     //게시판 글 수정 화면
     @GetMapping("/posts/modify")
-    public Optional<Post> postModify(String user_id, int num){ //해당 유저가 게시글 작성자랑 동일한지 확인
-        Optional<Post> post = postService.findByPostUserId(user_id, num);
+    public Optional<Post> postModify(String user_id, int post_id){ //해당 유저가 게시글 작성자랑 동일한지 확인
+        Optional<Post> post = postService.findByPostUserId(user_id, post_id);
         return post;
     }
 
     @PostMapping("/posts/update")
-    public void postUpdate(int num, @RequestPart("post") Post p, @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws Exception{
-        Post post = postService.findByPostNum(num); //현재 게시글 가져오기
+    public void postUpdate(int post_id, @RequestPart("post") Post p, @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws Exception{
+        Post post = postService.findByPostId(post_id); //현재 게시글 가져오기
         post.setTitle(p.getTitle());
         post.setContent(p.getContent());
 
@@ -102,8 +102,8 @@ public class PostController {
 
     //게시글 삭제
     @GetMapping("/posts/delete")
-    public void postDelete(String user_id, int num, Model model) {
-        Optional<Post> post = postService.findByPostUserId(user_id, num);
+    public void postDelete(String user_id, int post_id, Model model) {
+        Optional<Post> post = postService.findByPostUserId(user_id, post_id);
         if(!post.isEmpty()){
             postService.deletePost(post.get().getPost_id());
             model.addAttribute("message", "글 삭제가 완료되었습니다.");
@@ -113,8 +113,9 @@ public class PostController {
 
 
     //마이 페이지 - (해당 유저에 대한) 작성글 조회
-    @GetMapping("/members/page/post") //페이징 처리
-    public List<Post> getMemPost(String id, String page){
+    //@GetMapping("/members/page/post") //페이징 처리
+    @GetMapping("/posts/members")
+    public List<Post> getMemPost(@RequestParam("user_id") String id, String page){
 
         int begin, end, nowPage, pageSize = 10;
 
