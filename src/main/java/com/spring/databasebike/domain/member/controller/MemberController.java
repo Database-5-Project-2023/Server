@@ -147,6 +147,7 @@ public class MemberController {
             else if(age!=null){
                 rankList = memberService.getRankingAge("week", age);
             }
+            else rankList = memberService.getRanking("week");
         }
         else if(month!=null){
             if(gender!=null){
@@ -161,6 +162,7 @@ public class MemberController {
             else if(age!=null){
                 rankList = memberService.getRankingAge("month", age);
             }
+            else rankList = memberService.getRanking("month");
         }
         return rankList;
     }
