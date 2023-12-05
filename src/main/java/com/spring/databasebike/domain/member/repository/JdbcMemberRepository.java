@@ -199,7 +199,7 @@ public class JdbcMemberRepository implements MemberRepository {
                     "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
                     "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
                     "                ) g\n" +
-                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 week)\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 day)\n" +
                     "\t\tgroup by(g.user_id) \n" +
                     ") d;";
         }
@@ -246,7 +246,7 @@ public class JdbcMemberRepository implements MemberRepository {
                     "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
                     "                where members.address like ?\n" +
                     "                ) g\n" +
-                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 day)\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 1 month)\n" +
                     "\t\tgroup by(g.user_id) \n" +
                     ") d;";
         }
