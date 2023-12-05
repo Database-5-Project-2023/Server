@@ -79,16 +79,16 @@ public class JdbcPostRepository implements PostRepository{
     }
 
     @Override
-    public Post findByPostNum(int num) {
-        String sql = "select * from post limit ?, 1";
-        return jdbcTemplate.queryForObject(sql, PostRowMapper(), num);
+    public Post findByPostId(int post_id) {
+        String sql = "select * from post where creator_id = ?";
+        return jdbcTemplate.queryForObject(sql, PostRowMapper(), post_id);
     }
 
     @Override
-    public Optional<Post> findByPostUserId(String user_id, int num) {
-        String sql = "select * from(select * from post limit ?, 1)R where creator_id = ?";
+    public Optional<Post> findByPostUserId(String user_id, int post_id) {
+        String sql = "select * from where creator_id = ? and post_id = ?";
         try {
-            Post post = jdbcTemplate.queryForObject(sql, PostRowMapper(), num, user_id);
+            Post post = jdbcTemplate.queryForObject(sql, PostRowMapper(), user_id, post_id);
             return Optional.of(post);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();

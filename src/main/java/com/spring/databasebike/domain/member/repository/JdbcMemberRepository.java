@@ -3,8 +3,7 @@ package com.spring.databasebike.domain.member.repository;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
-import com.spring.databasebike.domain.post.entity.Post;
-import lombok.ToString;
+import com.spring.databasebike.domain.member.entity.Rank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -182,6 +181,120 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
+    public List<Rank> getRanking(String period) {
+        String sql = "";
+        if(period.equals("month")){
+            sql = "select rank() over(order by d.distance desc) as ranking, d.user_id as user_id, d.distance as distance\n" +
+                    "from ( select g.user_id, round(sum(g.distance), 1) as distance\n" +
+                    "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
+                    "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
+                    "                ) g\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 1 month)\n" +
+                    "\t\tgroup by(g.user_id) \n" +
+                    ") d;";
+        }
+        else if(period.equals("week")){
+            sql = "select rank() over(order by d.distance desc) as ranking, d.user_id as user_id, d.distance as distance\n" +
+                    "from ( select g.user_id, round(sum(g.distance), 1) as distance\n" +
+                    "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
+                    "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
+                    "                ) g\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 week)\n" +
+                    "\t\tgroup by(g.user_id) \n" +
+                    ") d;";
+        }
+        List<Rank> rankList = jdbcTemplate.query(sql, RankRowMapper());
+        return rankList;
+    }
+
+    @Override
+    public List<Rank> getRankingGender(String period, String gender) {
+        String sql = "";
+        if(period.equals("month")){
+            sql = "select rank() over(order by d.distance desc) as ranking, d.user_id as user_id, d.distance as distance\n" +
+                    "from ( select g.user_id, round(sum(g.distance), 1) as distance\n" +
+                    "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
+                    "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
+                    "                where members.gender = ?\n" +
+                    "                ) g\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 1 month)\n" +
+                    "\t\tgroup by(g.user_id) \n" +
+                    ") d;";
+        }
+        else if(period.equals("week")){
+            sql = "select rank() over(order by d.distance desc) as ranking, d.user_id as user_id, d.distance as distance\n" +
+                    "from ( select g.user_id, round(sum(g.distance), 1) as distance\n" +
+                    "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
+                    "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
+                    "                where members.gender = ?\n" +
+                    "                ) g\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 day)\n" +
+                    "\t\tgroup by(g.user_id) \n" +
+                    ") d;";
+        }
+        List<Rank> rankList = jdbcTemplate.query(sql, RankRowMapper(), gender);
+        return rankList;
+    }
+
+    @Override
+    public List<Rank> getRankingBorough(String period, String borough) {
+        String sql = "";
+        if(period.equals("month")){
+            sql = "select rank() over(order by d.distance desc) as ranking, d.user_id as user_id, d.distance as distance\n" +
+                    "from ( select g.user_id, round(sum(g.distance), 1) as distance\n" +
+                    "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
+                    "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
+                    "                where members.address like ?\n" +
+                    "                ) g\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 day)\n" +
+                    "\t\tgroup by(g.user_id) \n" +
+                    ") d;";
+        }
+        else if(period.equals("week")){
+            sql = "select rank() over(order by d.distance desc) as ranking, d.user_id as user_id, d.distance as distance\n" +
+                    "from ( select g.user_id, round(sum(g.distance), 1) as distance\n" +
+                    "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
+                    "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
+                    "                where members.address like ?\n" +
+                    "                ) g\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 day)\n" +
+                    "\t\tgroup by(g.user_id) \n" +
+                    ") d;";
+        }
+        List<Rank> rankList = jdbcTemplate.query(sql, RankRowMapper(), "%" + borough + "%");
+        return rankList;
+    }
+
+    @Override
+    public List<Rank> getRankingAge(String period, Integer age) {
+        String sql = "";
+        if(period.equals("month")){
+            sql = "select rank() over(order by d.distance desc) as ranking, d.user_id as user_id, d.distance as distance\n" +
+                    "from ( select g.user_id, round(sum(g.distance), 1) as distance\n" +
+                    "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
+                    "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
+                    "                where members.age >= ? and members.age < ?\n" +
+                    "                ) g\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 1 month)\n" +
+                    "\t\tgroup by(g.user_id) \n" +
+                    ") d;";
+        }
+        else if(period.equals("week")){
+            sql = "select rank() over(order by d.distance desc) as ranking, d.user_id as user_id, d.distance as distance\n" +
+                    "from ( select g.user_id, round(sum(g.distance), 1) as distance\n" +
+                    "\t\tfrom (SELECT usage_history.user_id, usage_history.distance, usage_history.arrival_time\n" +
+                    "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
+                    "                where members.age >= ? and members.age < ?\n" +
+                    "                ) g\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 day)\n" +
+                    "\t\tgroup by(g.user_id) \n" +
+                    ") d;";
+        }
+        List<Rank> rankList = jdbcTemplate.query(sql, RankRowMapper(), age, age+10);
+        return rankList;
+    }
+
+    @Override
     public List<Member> findAll(int begin, int end) { //전체 회원 조회
         String sql = "SELECT * FROM (\n" +
                 "    SELECT ROW_NUMBER() OVER (ORDER BY user_name) AS NUM, N.*\n" +
@@ -251,5 +364,14 @@ public class JdbcMemberRepository implements MemberRepository {
             bookmarks.setUser_id(rs.getString("user_id"));
             bookmarks.setStation_id(rs.getString("station_id"));
             return bookmarks;
+        }; }
+
+    private RowMapper<Rank> RankRowMapper() {
+        return (rs, rowNum) -> {
+            Rank rank = new Rank();
+            rank.setRank(rs.getInt("ranking"));
+            rank.setUser_id(rs.getString("user_id"));
+            rank.setDistance(rs.getFloat("distance"));
+            return rank;
         }; }
 }
