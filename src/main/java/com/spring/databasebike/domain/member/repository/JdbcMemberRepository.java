@@ -246,7 +246,7 @@ public class JdbcMemberRepository implements MemberRepository {
                     "\t\t\t\tFROM usage_history join members ON usage_history.user_id = members.user_id\n" +
                     "                where members.address like ?\n" +
                     "                ) g\n" +
-                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 7 day)\n" +
+                    "\t\twhere date(g.arrival_time) >= date_sub(now(), interval 1 month)\n" +
                     "\t\tgroup by(g.user_id) \n" +
                     ") d;";
         }
