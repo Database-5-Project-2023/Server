@@ -40,10 +40,10 @@ public class PostService {
         return postRepository.getTotalPost(id);
     }
 
-    //n번째 게시글 반환
-    public Post findByPostNum(int num){return postRepository.findByPostNum(num);}
+    //post_id로 반환
+    public Post findByPostId(int post_id){return postRepository.findByPostId(post_id);}
 
-    public Optional<Post> findByPostUserId(String user_id, int num){return postRepository.findByPostUserId(user_id, num);}
+    public Optional<Post> findByPostUserId(String user_id, int post_id){return postRepository.findByPostUserId(user_id, post_id);}
 
     public void updatePost(Post p){postRepository.updatePost(p);}
 

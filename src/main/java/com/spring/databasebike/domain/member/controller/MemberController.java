@@ -4,6 +4,7 @@ import com.spring.databasebike.domain.history.service.HistoryService;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
+import com.spring.databasebike.domain.member.entity.Rank;
 import com.spring.databasebike.domain.member.service.MemberService;
 import com.spring.databasebike.domain.post.entity.Post;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +66,7 @@ public class MemberController {
     }
 
     @PostMapping("members/login")
-    public Optional<Member> login(String id, String pwd, HttpServletRequest request) {
+    public Optional<Member> login(@RequestParam("id") String id, @RequestParam("pwd") String pwd, HttpServletRequest request) {
         Optional<Member> mem = memberService.login(id, pwd);
         if(!mem.isEmpty()){
             HttpSession httpSession = request.getSession(true);
@@ -96,8 +97,11 @@ public class MemberController {
 
     //마이페이지 - 회원 정보 수정 페이지 - 아이디를 제외한 정보 수정
     @PostMapping("members/edit") //주소 수정
-    public Optional<Member> editMem(String id, String newPwd, String newEmail, String newPhone,
-                          String newAddr, String newWeight){
+    public Optional<Member> editMem(@RequestParam("user") String id, @RequestParam(value = "newPwd", required = false)String newPwd,
+                                    @RequestParam(value = "newEmail", required = false)String newEmail,
+                                    @RequestParam(value = "newPhone", required = false)String newPhone,
+                                    @RequestParam(value = "newAddr", required = false)String newAddr,
+                                    @RequestParam(value = "newWeight", required = false)String newWeight){
         if(newPwd!=null) {
             memberService.editPwd(id, newPwd);
         }
@@ -117,69 +121,51 @@ public class MemberController {
         return mem; //수정한 이용자 반환
     }
 
-    //마이 페이지 - 대여 및 반납 이력 조회(기간별 조회 가능)
-    /*@GetMapping("/history")
-    public List<GetHistoryRes> getMemHistory(String id, String page, @RequestParam(value = "period", required = false) String period, @RequestParam(value="start_date", required = false) String start_date, @RequestParam(value="end_date", required = false) String end_date){
-
-        //1. 기간 검색 없이 전체 조회
-        //2. 1주일, 1개월, 3개월, 6개월 중 하나를 선택하여 조회하고자 하는 경우(period에 1 week, 1 month, 3 month, 6 month로 넣어서 전달)
-        //3. start_date와 end_date에 특정 연도와 날짜를 지정하여 검색하는 경우
-
-        int begin, end, nowPage, pageSize = 10;
-
-        List<GetHistoryRes> list = historyService.findHistoryByUserId(id);
-
-        if ( page == null || page.equals("")) {
-            nowPage = 1;
-        } else {
-            nowPage = Integer.parseInt(page);
-        }
-
-        // 현재 페이지에서 가져올 시작 위치 구하기
-        begin = ( (nowPage - 1) * pageSize ) + 1;
-        // 이력의 끝 위치 찾기
-        end = begin + pageSize - 1;
-
-        int totalPost = memberService.memHistoryNum(id);
-
-        int startPage = Math.max(nowPage - 4, 1);
-        int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
-
-        if(period == null && start_date == null && end_date == null) { //기간 검색하지 않는 경우
-            list = memberService.memHistoryList(id, begin, end);
-        }else { //검색 하는 경우
-            list = memberService.memSearchHistoryList(id, period, start_date, end_date, begin, end);
-        }
-
-        //model.addAttribute("nowPage", nowPage);
-        //model.addAttribute("startPage", startPage);
-        //model.addAttribute("endPage", endPage);
-
-        return list;
-    }*/
-
     //마이 페이지 - 작성글 조회 - PostController에 구현
 
     //마이 페이지 - 댓글 조회
 
     //마이 페이지 - 랭킹 조회
-    //1. 월간 이용 거리
-    /*@GetMapping("/history/ranking")
-    public HashMap<String, Float> rankingMonth(@RequestParam(value = "month", required = false) String month, @RequestParam(value = "week", required = false) String week){
-        HashMap<String, Float> ranking = new HashMap<>();
+    //월간/주간 및 성별, 거주지, 나이대별 이용 거리 랭킹
+    @GetMapping("/history/ranking")
+    public List<Rank> rankingMonth(@RequestParam(value = "month", required = false) String month, @RequestParam(value = "week", required = false) String week,
+                                   @RequestParam(value = "gender", required = false) String gender,
+                                   @RequestParam(value = "borough", required = false) String borough,
+                                   @RequestParam(value = "age", required = false) Integer age) {
+        List<Rank> rankList = memberService.getRanking("week"); //주간 랭킹이 default;
 
-
-
-        return ranking;
-    }*/
-    //2. 주간 이용 거리
-
-    //3. 성별 이용 거리
-
-    //4. 거주지 이용 거리
-
-    //5. 나이대 이용 거리
-
+        if(week!=null){
+            if(gender!=null){
+                if(gender.equals("M"))
+                    rankList = memberService.getRankingGender("week", "M");
+                else if(gender.equals("F"))
+                    rankList = memberService.getRankingGender("week", "F");
+            }
+            else if(borough!=null){
+                rankList = memberService.getRankingBorough("week", borough);
+            }
+            else if(age!=null){
+                rankList = memberService.getRankingAge("week", age);
+            }
+            else rankList = memberService.getRanking("week");
+        }
+        else if(month!=null){
+            if(gender!=null){
+                if(gender.equals("M"))
+                    rankList = memberService.getRankingGender("month", "M");
+                else if(gender.equals("F"))
+                    rankList = memberService.getRankingGender("month", "F");
+            }
+            else if(borough!=null){
+                rankList = memberService.getRankingBorough("month", borough);
+            }
+            else if(age!=null){
+                rankList = memberService.getRankingAge("month", age);
+            }
+            else rankList = memberService.getRanking("month");
+        }
+        return rankList;
+    }
 
 
     //마이 페이지 - 탈퇴
@@ -201,20 +187,20 @@ public class MemberController {
 
     //즐겨찾기 - 즐겨찾기 추가
     @PostMapping("/bookmarks/add")
-    public void addBookmarks(String user_id, String station_id){
+    public void addBookmarks(@RequestParam("user_id") String user_id, @RequestParam("station_id") String station_id){
         memberService.addBookmarks(user_id, station_id);
     }
 
     //즐겨찾기 조회 - 특정 이용자의 즐겨찾기 조회
     @GetMapping("/bookmarks")
-    public List<Bookmarks> findBookmarks(String user_id){
+    public List<Bookmarks> findBookmarks(@RequestParam("user_id") String user_id){
         List<Bookmarks> list = memberService.findBookmarks(user_id);
         return list;
     }
 
     //즐겨찾기 삭제 - 특정 이용자의 즐겨찾기 삭제
     @PostMapping("/bookmarks/delete")
-    public void deleteBookmarks(String user_id, String station_id){
+    public void deleteBookmarks(@RequestParam("user_id") String user_id, @RequestParam("station_id") String station_id){
         memberService.deleteBookmarks(user_id, station_id);
     }
 

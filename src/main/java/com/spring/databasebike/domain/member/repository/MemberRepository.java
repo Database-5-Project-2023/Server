@@ -3,6 +3,7 @@ package com.spring.databasebike.domain.member.repository;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
+import com.spring.databasebike.domain.member.entity.Rank;
 import com.spring.databasebike.domain.post.entity.Post;
 
 import java.util.ArrayList;
@@ -40,6 +41,14 @@ public interface MemberRepository {
     List <Bookmarks> findBookmarks(String id); //해당 이용자의 즐겨찾기 조회
 
     void deleteBookmarks(String user_id, String station_id); //해당 이용자의 즐겨찾기 삭제
+
+    List<Rank> getRanking(String period);
+
+    List<Rank> getRankingGender(String period, String gender);
+
+    List<Rank> getRankingBorough(String period, String borough);
+
+    List<Rank> getRankingAge(String period, Integer age);
 
     List<Member> findAll(int begin, int end); //관리자 - 회원 관리
 

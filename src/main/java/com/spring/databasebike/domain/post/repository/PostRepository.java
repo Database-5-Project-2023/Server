@@ -17,9 +17,9 @@ public interface PostRepository {
     Integer getTotalPost(String id); //해당 유저가 작성한 게시글 수를 얻어내는 것
     List<Post> getUserPostList(String id, int start, int end); //특정 이용자가 쓴 게시글 조회
 
-    Post findByPostNum(int num); //특정 게시글 조회(게시글 1개 조회)
+    Post findByPostId(int post_id); //특정 게시글 조회(게시글 1개 조회)
 
-    Optional<Post> findByPostUserId(String user_id, int num); //특정 게시글이 해당 유저가 쓴 글이라면, 가져오기
+    Optional<Post> findByPostUserId(String user_id, int post_id); //특정 게시글이 해당 유저가 쓴 글이라면, 가져오기
 
     void updatePost(Post p); //게시글 수정
 

@@ -3,6 +3,7 @@ package com.spring.databasebike.domain.member.service;
 import com.spring.databasebike.domain.member.entity.Bookmarks;
 import com.spring.databasebike.domain.member.entity.History;
 import com.spring.databasebike.domain.member.entity.Member;
+import com.spring.databasebike.domain.member.entity.Rank;
 import com.spring.databasebike.domain.member.repository.MemberRepository;
 import com.spring.databasebike.domain.post.entity.Post;
 import org.springframework.stereotype.Service;
@@ -89,6 +90,17 @@ public class MemberService {
     //특정 이용자의 특정 즐겨찾기 삭제
     public void deleteBookmarks(String user_id, String station_id){memberRepository.deleteBookmarks(user_id, station_id);}
 
+    //월간/주간 랭킹 조회
+    public List<Rank> getRanking(String period){return memberRepository.getRanking(period);}
+
+    //성별 랭킹 조회
+    public List<Rank> getRankingGender(String period, String gender){return memberRepository.getRankingGender(period, gender);}
+
+    //거주지 랭킹 조회
+    public List<Rank> getRankingBorough(String period, String borough){return memberRepository.getRankingBorough(period, borough);}
+
+    //나이대 랭킹 조회
+    public List<Rank> getRankingAge(String period, Integer age){return memberRepository.getRankingAge(period, age);}
 
     //회원 목록 조회
     public List<Member> findAll(int begin, int end){
