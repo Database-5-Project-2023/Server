@@ -136,13 +136,13 @@ public class StationController {
 
     /**
      * 대여소 검색
-     * @param searchStationReq
+     * @param station_address
      * @return
      */
     // TODO: 대여소 검색: 이름으로 -> 결과는 아이디랑 이름만 출력
     @GetMapping("/station/search")
-    public List<SearchStationRes> searchStationByAddress(@RequestPart("req") SearchStationReq searchStationReq){
-        return stationService.searchStationByAddress(searchStationReq.getStation_address());
+    public List<SearchStationRes> searchStationByAddress(@RequestParam("station_address") String station_address){
+        return stationService.searchStationByAddress(station_address);
     }
 
     // TODO: 고장 신고 -> BikeController에 작성
