@@ -1,20 +1,14 @@
 package com.spring.databasebike.domain.member.controller;
 
 import com.spring.databasebike.domain.history.service.HistoryService;
-import com.spring.databasebike.domain.member.entity.Bookmarks;
-import com.spring.databasebike.domain.member.entity.History;
-import com.spring.databasebike.domain.member.entity.Member;
-import com.spring.databasebike.domain.member.entity.Rank;
+import com.spring.databasebike.domain.member.entity.*;
 import com.spring.databasebike.domain.member.service.MemberService;
-import com.spring.databasebike.domain.post.entity.Post;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +66,11 @@ public class MemberController {
             HttpSession httpSession = request.getSession(true);
             httpSession.setAttribute("user_id", mem.get().getId());
             httpSession.setMaxInactiveInterval(60*60); // 세션 유지기간 60분
+
+            //String user = (String) httpSession.getAttribute("user_id"); //추가
+            //if(user == null) System.out.println("no session"); //추가
+            //else System.out.println("session: " + user); //추가
+
         }
         return mem; //만약 로그인이 안되면, null 반환됨.
     }
@@ -95,9 +94,17 @@ public class MemberController {
         //return "members/edit"; //페이지는 그대로. 회원 정보 수정 페이지로
     }*/
 
+    //마이페이지 - 게시글, 댓글 조회 페이지
+    @GetMapping("members/view")
+    public List<MemberList> ViewPostComment(@RequestParam("user") String id){
+            List<MemberList> memberLists = memberService.getPostComment(id);
+            return memberLists;
+    }
+
     //마이페이지 - 회원 정보 수정 페이지 - 아이디를 제외한 정보 수정
-    @PostMapping("members/edit") //주소 수정
-    public Optional<Member> editMem(@RequestParam("user") String id, @RequestParam(value = "newPwd", required = false)String newPwd,
+    @PostMapping("members/edit")
+    public Optional<Member> editMem(@RequestParam("user") String id,
+                                    @RequestParam(value = "newPwd", required = false)String newPwd,
                                     @RequestParam(value = "newEmail", required = false)String newEmail,
                                     @RequestParam(value = "newPhone", required = false)String newPhone,
                                     @RequestParam(value = "newAddr", required = false)String newAddr,
@@ -128,7 +135,8 @@ public class MemberController {
     //마이 페이지 - 랭킹 조회
     //월간/주간 및 성별, 거주지, 나이대별 이용 거리 랭킹
     @GetMapping("/history/ranking")
-    public List<Rank> rankingMonth(@RequestParam(value = "month", required = false) String month, @RequestParam(value = "week", required = false) String week,
+    public List<Rank> rankingMonth(@RequestParam(value = "month", required = false) String month,
+                                   @RequestParam(value = "week", required = false) String week,
                                    @RequestParam(value = "gender", required = false) String gender,
                                    @RequestParam(value = "borough", required = false) String borough,
                                    @RequestParam(value = "age", required = false) Integer age) {
@@ -176,7 +184,7 @@ public class MemberController {
     }
 
     //마이페이지 - 회원 탈퇴 페이지
-    @PostMapping("members/delete")
+    @DeleteMapping("members/delete")
     public void deleteMem(String id, HttpServletRequest request){
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -192,14 +200,14 @@ public class MemberController {
     }
 
     //즐겨찾기 조회 - 특정 이용자의 즐겨찾기 조회
-    @GetMapping("/bookmarks")
+    @GetMapping("/bookmarks") //확인
     public List<Bookmarks> findBookmarks(@RequestParam("user_id") String user_id){
         List<Bookmarks> list = memberService.findBookmarks(user_id);
         return list;
     }
 
-    //즐겨찾기 삭제 - 특정 이용자의 즐겨찾기 삭제
-    @PostMapping("/bookmarks/delete")
+    //즐겨찾기 삭제 - 특정 이용자의 즐겨찾기 삭제 - 확인
+    @DeleteMapping("/bookmarks/delete")
     public void deleteBookmarks(@RequestParam("user_id") String user_id, @RequestParam("station_id") String station_id){
         memberService.deleteBookmarks(user_id, station_id);
     }
@@ -208,7 +216,7 @@ public class MemberController {
 
     //1. 회원 관리 페이지 - 회원 조회 및 검색- findAll or 검색함수(검색은 id로)
     @GetMapping("/admin/user_manage")
-    public List<Member> AdminUserList(String page, @RequestPart(value = "search", required = false) String searchKeyword){
+    public List<Member> AdminUserList(String page, @RequestParam(value = "search", required = false) String searchKeyword){
         int begin, end, nowPage, pageSize = 10;
 
         if ( page == null || page.equals("")) {
@@ -226,31 +234,24 @@ public class MemberController {
 
         if(searchKeyword == null) //검색하지 않고 조회
         {
-            List <Member> list = null;
-            list = memberService.findAll(begin, end);
-            int totalMember = list.size(); //전체 게시글 수
-            startPage = Math.max(nowPage - 4, 1);
-            endPage = Math.min(nowPage + 5, totalMember / pageSize + 1);
+            List <Member> list = memberService.getMembers();
+
             return list;
         }
         else {
-            List <Member> list = new ArrayList<Member>();
+            List <Member> list = new ArrayList<>();
             Optional <Member> member;
             member = memberService.findById(searchKeyword); //검색하여 조회
             if(!member.isEmpty()) {
                 Member mem = member.get();
                 list.add(mem);
             }
-            startPage = 1;
-            endPage = 1;
+
             return list;
         }
-        /*model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);*/
     }
 
-    //2. 월 별 회원 가입수 그래프 - created_at column 추가함
+    //2. 월 별 회원 가입수 그래프 - created_at column 추가함 - 특별 기능
     @GetMapping("/admin/dashboard/memGraph")
     public HashMap<Integer, Integer> AdminMemGraph(){
         HashMap<Integer, Integer> list = memberService.getMemGraph();

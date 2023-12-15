@@ -1,9 +1,6 @@
 package com.spring.databasebike.domain.member.repository;
 
-import com.spring.databasebike.domain.member.entity.Bookmarks;
-import com.spring.databasebike.domain.member.entity.History;
-import com.spring.databasebike.domain.member.entity.Member;
-import com.spring.databasebike.domain.member.entity.Rank;
+import com.spring.databasebike.domain.member.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -86,81 +83,17 @@ public class JdbcMemberRepository implements MemberRepository {
 
     @Override
     public void deleteMem(String id){
-        String sql = "DELETE FROM members WHERE user_id = ?"; //참조 문제,,, ON DELETE CASCADE 추가해주어야 함
-        //https://velog.io/@eensungkim/ON-DELETE-CASCADE-feat.-row-%ED%95%9C-%EB%B2%88%EC%97%90-%EC%A7%80%EC%9A%B0%EB%8A%94-%EB%B0%A9%EB%B2%95-TIL-78%EC%9D%BC%EC%B0%A8
+        String sql = "DELETE FROM comment WHERE creator_id = ?";
+        jdbcTemplate.update(sql, id);
+        sql = "DELETE FROM post WHERE creator_id = ?";
+        jdbcTemplate.update(sql, id);
+        sql = "DELETE FROM bookmarks WHERE user_id = ?";
+        jdbcTemplate.update(sql, id);
+        sql = "DELETE FROM usage_history WHERE user_id = ?";
+        jdbcTemplate.update(sql, id);
+        sql = "DELETE FROM members where user_id = ?";
         jdbcTemplate.update(sql, id);
     }
-
-    /*@Override
-    public Integer getTotalHistory(String id){
-        String sql = "select count(*) from usage_history where user_id = ?";
-        return jdbcTemplate.queryForObject(sql, Integer.class, id);
-    }
-
-    @Override
-    public List<History> getHistoryList(String id, int start, int end) {
-        String sql = "SELECT * FROM (\n" +
-                "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                "    FROM (\n" +
-                "        SELECT * FROM usage_history WHERE user_id = ?\n" +
-                "    ) N\n" +
-                ") AS T\n" +
-                "WHERE NUM BETWEEN ? AND ?;";
-        return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
-    }
-    @Override
-    public List<History> getSearchHistoryList(String id, String period, String start_date, String end_date, int start, int end) {
-        String sql = "";
-        if(period!=null) {
-            if(period.equals("1 week")) {
-                sql = "SELECT * FROM (\n" +
-                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                        "    FROM (\n" +
-                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 7 day)\n" +
-                        "    ) N\n" +
-                        ") AS T\n" +
-                        "WHERE NUM BETWEEN ? AND ?;";
-            }
-            else if(period.equals("1 month")){
-                sql = "SELECT * FROM (\n" +
-                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                        "    FROM (\n" +
-                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 1 month)\n" +
-                        "    ) N\n" +
-                        ") AS T\n" +
-                        "WHERE NUM BETWEEN ? AND ?;";
-            }
-            else if(period.equals("3 month")){
-                sql = "SELECT * FROM (\n" +
-                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                        "    FROM (\n" +
-                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 3 month)\n" +
-                        "    ) N\n" +
-                        ") AS T\n" +
-                        "WHERE NUM BETWEEN ? AND ?;";
-            }
-            else if(period.equals("6 month")){
-                sql = "SELECT * FROM (\n" +
-                        "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                        "    FROM (\n" +
-                        "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date_sub(now(), interval 6 month)\n" +
-                        "    ) N\n" +
-                        ") AS T\n" +
-                        "WHERE NUM BETWEEN ? AND ?;";
-            }
-            return jdbcTemplate.query(sql, HistoryRowMapper(), id, start, end);
-        }
-        else{
-            sql = "SELECT * FROM (\n" +
-                    "    SELECT ROW_NUMBER() OVER (ORDER BY starting_time DESC) AS NUM, N.*\n" +
-                    "    FROM (\n" +
-                    "        SELECT * FROM usage_history WHERE user_id = ? and date(starting_time) >= date(?) and date(arrival_time) <= date(?)\n" +
-                    "    ) N\n" +
-                    ") AS T\n" +
-                    "WHERE NUM BETWEEN ? AND ?;";
-            return jdbcTemplate.query(sql, HistoryRowMapper(), id, start_date, end_date, start, end);
-        }
-    }*/
 
     @Override
     public void addBookmarks(String user_id, String station_id) {
@@ -307,6 +240,12 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
+    public Integer getTotalMember() {
+        String sql = "select count(*) from members";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    @Override
     public HashMap<Integer, Integer> getMemGraph() {
         HashMap<Integer, Integer> list = new HashMap<>();
 
@@ -322,6 +261,33 @@ public class JdbcMemberRepository implements MemberRepository {
             list.put(i, count);
         }
         return list;
+    }
+
+    @Override
+    public List<Member> getTotalMem() {
+        String sql = "SELECT * \n" +
+                "FROM (\n" +
+                "\t\tSELECT ROW_NUMBER() OVER (ORDER BY user_name) AS NUM, N.*\n" +
+                "\t\tFROM (\n" +
+                "\t\t\t\tSELECT * FROM members\n" +
+                "\t\t) N\n" +
+                ")T;";
+        return jdbcTemplate.query(sql, MemberRowMapper());
+    }
+
+    @Override
+    public List<MemberList> getPostComment(String id) {
+        String sql = "SELECT title, content\n" +
+                "FROM post\n" +
+                "WHERE creator_id = ?\n" +
+                "UNION\n" +
+                "SELECT post_id, content\n" +
+                "FROM comment\n" +
+                "WHERE creator_id = ?;";
+        List<MemberList> memberLists = jdbcTemplate.query(sql, MemberListRowMapper(), id, id);
+
+        return memberLists;
+
     }
 
     private RowMapper<Member> MemberRowMapper() {
@@ -373,5 +339,13 @@ public class JdbcMemberRepository implements MemberRepository {
             rank.setUser_id(rs.getString("user_id"));
             rank.setDistance(rs.getFloat("distance"));
             return rank;
+        }; }
+
+    private RowMapper<MemberList> MemberListRowMapper() {
+        return (rs, rowNum) -> {
+            MemberList result = new MemberList();
+            result.setTitle(rs.getString("title"));
+            result.setContent(rs.getString("content"));
+            return result;
         }; }
 }
