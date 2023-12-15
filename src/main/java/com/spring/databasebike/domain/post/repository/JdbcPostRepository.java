@@ -129,6 +129,12 @@ public class JdbcPostRepository implements PostRepository{
         return jdbcTemplate.query(sql, PostRowMapper());
     }
 
+    @Override
+    public List<Post> getPostById(String id) {
+        String sql = "SELECT * FROM post WHERE creator_id = ?";
+        return jdbcTemplate.query(sql, PostRowMapper(), id);
+    }
+
     private RowMapper<Post> PostRowMapper() {
         return (rs, rowNum) -> {
             Post post = new Post();

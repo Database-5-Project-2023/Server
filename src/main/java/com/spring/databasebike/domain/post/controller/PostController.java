@@ -1,6 +1,9 @@
 package com.spring.databasebike.domain.post.controller;
 import com.spring.databasebike.domain.awsS3.service.AwsS3Service;
+import com.spring.databasebike.domain.comment.entity.Comment;
+import com.spring.databasebike.domain.comment.service.CommentService;
 import com.spring.databasebike.domain.post.entity.Post;
+import com.spring.databasebike.domain.post.entity.PostComment;
 import com.spring.databasebike.domain.post.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,9 @@ public class PostController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private AwsS3Service awsS3Service;
@@ -66,9 +72,13 @@ public class PostController {
 
     //특정 게시글 조회 화면
     @GetMapping("/posts/view")
-    public Post postView(int post_id){
+    public PostComment postView(int post_id){
         Post post = postService.findByPostId(post_id);
-        return post;
+        List<Comment> commentList = commentService.getCommentListByPostId(post_id);
+        PostComment postComment = new PostComment();
+        postComment.setPost(post);
+        postComment.setCommentList(commentList);
+        return postComment;
     }
 
     //게시판 글 수정 화면
@@ -178,5 +188,10 @@ public class PostController {
         return list;
     }
 
+    @GetMapping("members/viewPost") //특정 이용자의 게시글 조회
+    public List<Post> getMemPost(@RequestParam("user") String id){
+        List<Post> posts = postService.getPostById(id);
+        return posts;
+    }
 
 }

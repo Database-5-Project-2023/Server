@@ -28,4 +28,6 @@ public interface PostRepository {
     List<Post> recentPost(); //최근 게시글 5개 조회
 
 
+    List<Post> getPostById(String id); //특정 이용자의 게시글 조회
+
 }
