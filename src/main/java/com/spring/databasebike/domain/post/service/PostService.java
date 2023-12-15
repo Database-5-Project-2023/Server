@@ -50,4 +50,6 @@ public class PostService {
     public void deletePost(int post_id){postRepository.deletePost(post_id);}
 
     public List<Post> recentPost(){return postRepository.recentPost();}
+
+    public List<Post> getPostById(String id){return postRepository.getPostById(id);}
 }

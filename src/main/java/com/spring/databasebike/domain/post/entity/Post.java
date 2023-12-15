@@ -26,7 +26,7 @@ public class Post {
 
     private String fileName;
 
-    private String filePath; //안쓰는데...지워도 되려나?
+    private String filePath;
 
     private Integer hit;
 

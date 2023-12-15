@@ -25,7 +25,7 @@ public class HistoryController {
 
     //마이 페이지 - 대여 및 반납 이력 조회(기간별 조회 가능)
     @GetMapping("/history")
-    public List<GetHistoryRes> getMemHistory(String id, String page, @RequestParam(value = "period", required = false) String period, @RequestParam(value="start_date", required = false) String start_date, @RequestParam(value="end_date", required = false) String end_date, Model model){
+    public List<GetHistoryRes> getMemHistory(String id, String page, @RequestParam(value = "period", required = false) String period, @RequestParam(value="start_date", required = false) String start_date, @RequestParam(value="end_date", required = false) String end_date){
 
         //1. 기간 검색 없이 전체 조회
         //2. 1주일, 1개월, 3개월, 6개월 중 하나를 선택하여 조회하고자 하는 경우(period에 1 week, 1 month, 3 month, 6 month로 넣어서 전달)
@@ -56,10 +56,6 @@ public class HistoryController {
         }else { //검색 하는 경우
             list = historyService.memSearchHistoryList(id, period, start_date, end_date, begin, end);
         }
-
-        model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
 
         return list;
     }
