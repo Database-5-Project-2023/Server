@@ -1,9 +1,6 @@
 package com.spring.databasebike.domain.member.repository;
 
-import com.spring.databasebike.domain.member.entity.Bookmarks;
-import com.spring.databasebike.domain.member.entity.History;
-import com.spring.databasebike.domain.member.entity.Member;
-import com.spring.databasebike.domain.member.entity.Rank;
+import com.spring.databasebike.domain.member.entity.*;
 import com.spring.databasebike.domain.post.entity.Post;
 
 import java.util.ArrayList;
@@ -52,6 +49,12 @@ public interface MemberRepository {
 
     List<Member> findAll(int begin, int end); //관리자 - 회원 관리
 
+    Integer getTotalMember(); //전체 회원 수 조회
+
     HashMap<Integer, Integer> getMemGraph();
+
+    List<Member> getTotalMem(); //전체 회원 조회
+
+    List<MemberList> getPostComment(String id); //특정 이용자가 작성한 게시글 및 댓글 조회
 
 }

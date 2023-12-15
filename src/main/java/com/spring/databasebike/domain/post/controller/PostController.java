@@ -48,10 +48,6 @@ public class PostController {
         int startPage = Math.max(nowPage - 4, 1);
         int endPage = Math.min(nowPage + 5, totalPost/pageSize + 1);
 
-        /*for(Post p: list){
-            System.out.println(p.getPost_id() + " " + p.getCreator_id() + " " + p.getTitle() + " " + p.getContent());
-        }*/
-
         return list;
     }
 
@@ -96,19 +92,17 @@ public class PostController {
             awsS3Service.deleteImage(post.getFileName()); //지우기
             post.setFileName(null);
         }
-        post.setFilePath(p.getFilePath()); //null로 안해도 되나?
+        post.setFilePath(p.getFilePath());
         postService.updatePost(post);
     }
 
     //게시글 삭제
     @GetMapping("/posts/delete")
-    public void postDelete(String user_id, int post_id, Model model) {
+    public void postDelete(String user_id, int post_id) {
         Optional<Post> post = postService.findByPostUserId(user_id, post_id);
         if(!post.isEmpty()){
             postService.deletePost(post.get().getPost_id());
-            model.addAttribute("message", "글 삭제가 완료되었습니다.");
         }
-        else model.addAttribute("message", "삭제 권한이 없습니다.");
     }
 
 
@@ -151,9 +145,6 @@ public class PostController {
     @GetMapping("/admin/dashboard/recentPost")
     public List<Post> recentPost(){
         List <Post> list = postService.recentPost();
-        /*for(Post p: list){
-            System.out.println(p.getPost_id() + " " + p.getCreator_id() + " " + p.getTitle() + " " + p.getContent());
-        }*/
         return list;
     }
 

@@ -25,7 +25,7 @@ public class JdbcPostRepository implements PostRepository{
     @Override
     public void save(Post p) {
 
-        String file_path = ""; //필요한가?
+        String file_path = "";
 
         Long datetime = System.currentTimeMillis();
         Timestamp timestamp = new Timestamp(datetime);
@@ -80,7 +80,7 @@ public class JdbcPostRepository implements PostRepository{
 
     @Override
     public Post findByPostId(int post_id) {
-        String sql = "select * from post where creator_id = ?";
+        String sql = "select * from post where post_id = ?";
         return jdbcTemplate.queryForObject(sql, PostRowMapper(), post_id);
     }
 

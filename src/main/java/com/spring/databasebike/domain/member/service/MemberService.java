@@ -1,9 +1,6 @@
 package com.spring.databasebike.domain.member.service;
 
-import com.spring.databasebike.domain.member.entity.Bookmarks;
-import com.spring.databasebike.domain.member.entity.History;
-import com.spring.databasebike.domain.member.entity.Member;
-import com.spring.databasebike.domain.member.entity.Rank;
+import com.spring.databasebike.domain.member.entity.*;
 import com.spring.databasebike.domain.member.repository.MemberRepository;
 import com.spring.databasebike.domain.post.entity.Post;
 import org.springframework.stereotype.Service;
@@ -107,5 +104,13 @@ public class MemberService {
         return memberRepository.findAll(begin, end);
     }
 
+    //전체 회원 수 조회
+    public Integer getTotalMem(){return memberRepository.getTotalMember();}
+
     public HashMap<Integer, Integer> getMemGraph(){return memberRepository.getMemGraph();}
+
+    //전체 회원 조회
+    public List<Member> getMembers(){return memberRepository.getTotalMem();}
+
+    public List<MemberList> getPostComment(String id){return memberRepository.getPostComment(id);}
 }
