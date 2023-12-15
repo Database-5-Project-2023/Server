@@ -95,7 +95,7 @@ public class JdbcStationRepository implements StationRepository {
 
     @Override
     public List<Station> getStationByLoanCount() {
-        List<Station> result = jdbcTemplate.query("select * from station order by loan_count DESC limit 10", stationRowMapper());
+        List<Station> result = jdbcTemplate.query("select * from station order by loan_count DESC", stationRowMapper());
         return result;
     }
 
@@ -153,7 +153,7 @@ public class JdbcStationRepository implements StationRepository {
 
     @Override
     public List<Station> findAll() {
-        return jdbcTemplate.query("select * from station limit 10", stationRowMapper());
+        return jdbcTemplate.query("select * from station", stationRowMapper());
     }
 
     @Override
